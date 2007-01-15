@@ -1,64 +1,76 @@
-cd d:\data\codes\%~n0\trunk
+setlocal
+set app_name=%~n0
+
+
+cd d:\data\codes\%appname%\trunk
 
 for /F "tokens=1-3 delims=/ " %%a in ('date /t') do set DATES=%%a%%b%%c
 
-del "%~n0.jar"
-rmdir "chrome" /s /q
-del "o:\xul\xpi\%~n0.xpi"
-del "o:\xul\xpi\%~n0_en.xpi"
-del "o:\xul\xpi\%~n0.lzh"
+del "o:\xul\xpi\%appname%.xpi"
+del "o:\xul\xpi\%appname%_en.xpi"
+del "o:\xul\xpi\%appname%.lzh"
 
 chmod -cfr 644 *.jar *.js *.light *.inf *.rdf *.cfg *.manifest
 
+
+
+mkdir temp
+xcopy content temp\content /i /s
+xcopy locale temp\locale /i /s
+xcopy skin temp\skin /i /s
+xcopy defaults temp\defaults /i /s
+cd temp
+
+
+
 mkdir "chrome"
-zip -r0 "chrome\%~n0.jar" content locale skin
+zip -r0 "chrome\%appname%.jar" content locale skin
 
 del locale.inf
-copy ..\ja.inf .\locale.inf
+copy o:\xul\codes\make-xpi\ja.inf .\locale.inf
 del options.inf
-copy "..\options.%~n0.ja.inf" .\options.inf
-zip -9 o:\xul\xpi\%~n0.xpi *.js *.light *.inf *.rdf *.cfg *.manifest
-zip -9 -r o:\xul\xpi\%~n0.xpi chrome
-zip -9 -r o:\xul\xpi\%~n0.xpi defaults
+copy "o:\xul\codes\make-xpi\options.%appname%.ja.inf" .\options.inf
+zip -9 o:\xul\xpi\%appname%.xpi *.js *.light *.inf *.rdf *.cfg *.manifest
+zip -9 -r o:\xul\xpi\%appname%.xpi chrome
+zip -9 -r o:\xul\xpi\%appname%.xpi defaults
 
 
 IF EXIST readme.txt GOTO MAKELZH
 GOTO MAKEEN
 
 :MAKELZH
-c:\apps\Dos\unlha\unlha.exe a -m0 o:\xul\xpi\%~n0.lzh o:\xul\xpi\%~n0.xpi readme.txt
+c:\apps\Dos\unlha\unlha.exe a -m0 o:\xul\xpi\%appname%.lzh o:\xul\xpi\%appname%.xpi readme.txt
 
 
 :MAKEEN
 del locale.inf
-copy ..\en.inf .\locale.inf
+copy o:\xul\codes\make-xpi\en.inf .\locale.inf
 del options.inf
-copy "..\options.%~n0.en.inf" .\options.inf
+copy "o:\xul\codes\make-xpi\options.%appname%.en.inf" .\options.inf
 chmod -cf 644 *.inf
-zip -9 o:\xul\xpi\%~n0_en.xpi *.js *.light *.inf *.rdf *.cfg *.manifest
-zip -9 -r o:\xul\xpi\%~n0_en.xpi chrome
-zip -9 -r o:\xul\xpi\%~n0_en.xpi defaults
+zip -9 o:\xul\xpi\%appname%_en.xpi *.js *.light *.inf *.rdf *.cfg *.manifest
+zip -9 -r o:\xul\xpi\%appname%_en.xpi chrome
+zip -9 -r o:\xul\xpi\%appname%_en.xpi defaults
 
 
 
 IF EXIST readme.txt GOTO COPYLZH
-copy o:\xul\xpi\%~n0.xpi c:\apps\win\other\mozilla\_packages\%~n0_%DATES%.xpi.zip
+copy o:\xul\xpi\%appname%.xpi c:\apps\win\other\mozilla\_packages\%appname%_%DATES%.xpi.zip
 GOTO COPYFILES
 
 :COPYLZH
-copy o:\xul\xpi\%~n0.lzh c:\apps\win\other\mozilla\_packages\%~n0_%DATES%.lzh
+copy o:\xul\xpi\%appname%.lzh c:\apps\win\other\mozilla\_packages\%appname%_%DATES%.lzh
 
 
 
 :COPYFILES
 
-copy "chrome\%~n0.jar" .\
-rmdir "chrome" /s /q
-
-del *.inf
-del *.jar
+cd ..
+rmdir "temp" /s /q
 
 
-rem copy %~n0.jar C:\Apps\Win\Other\Mozilla\bin\chrome\%~n0.jar
-rem copy %~n0.jar C:\Apps\Win\Other\Mozilla\bin16\chrome\%~n0.jar
-rem copy %~n0.jar "C:\Apps\Win\Other\Netscape\Netscape 7\chrome\%~n0.jar"
+rem copy %appname%.jar C:\Apps\Win\Other\Mozilla\bin\chrome\%appname%.jar
+rem copy %appname%.jar C:\Apps\Win\Other\Mozilla\bin16\chrome\%appname%.jar
+rem copy %appname%.jar "C:\Apps\Win\Other\Netscape\Netscape 7\chrome\%appname%.jar"
+
+endlocal
