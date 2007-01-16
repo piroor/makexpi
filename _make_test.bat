@@ -3,6 +3,7 @@ set appname=%~n0
 set appname=%appname:~0,-5%
 
 
+d:
 cd d:\data\codes\%appname%\trunk
 
 for /F "tokens=1-3 delims=/ " %%a in ('date /t') do set DATES=%%a%%b%%c

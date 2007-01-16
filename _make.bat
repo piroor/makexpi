@@ -1,7 +1,8 @@
 setlocal
-set app_name=%~n0
+set appname=%~n0
 
 
+d:
 cd d:\data\codes\%appname%\trunk
 
 for /F "tokens=1-3 delims=/ " %%a in ('date /t') do set DATES=%%a%%b%%c
