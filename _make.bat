@@ -19,6 +19,9 @@ xcopy content temp\content /i /s
 xcopy locale temp\locale /i /s
 xcopy skin temp\skin /i /s
 xcopy defaults temp\defaults /i /s
+xcopy *.js temp\ /i
+xcopy *.rdf temp\ /i
+xcopy *.manifest temp\ /i
 cd temp
 
 
