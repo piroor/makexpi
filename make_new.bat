@@ -51,6 +51,9 @@ GOTO DELETETEMPFILES
 :MAKELZH
 unlha.exe a -m0 ..\%appname%.lzh ..\%appname%.xpi ..\readme.txt
 
+IF EXIST ..\install.js GOTO MAKEENOLD
+GOTO DELETETEMPFILES
+
 
 
 :MAKEENOLD
