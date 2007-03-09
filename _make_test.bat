@@ -19,6 +19,7 @@ xcopy content temp\content /i /s
 xcopy locale temp\locale /i /s
 xcopy skin temp\skin /i /s
 xcopy defaults temp\defaults /i /s
+xcopy components temp\components /i /s
 xcopy *.js temp\ /i
 xcopy *.rdf temp\ /i
 xcopy *.manifest temp\ /i
@@ -37,6 +38,7 @@ chmod -cf 644 *.jar *.js *.light *.inf *.rdf *.cfg
 zip -9 o:\xul\xpi\%appname%_test.xpi *.js *.light *.inf *.rdf *.cfg *.manifest
 zip -9 -r o:\xul\xpi\%appname%_test.xpi chrome
 zip -9 -r o:\xul\xpi\%appname%_test.xpi defaults
+zip -9 -r o:\xul\xpi\%appname%_test.xpi components
 
 
 cd ..
