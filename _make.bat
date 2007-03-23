@@ -2,7 +2,7 @@ setlocal
 set appname=%~n0
 
 d:
-cd d:\data\codes\%appname%\trunk
+cd d:\data\codes\%appname%
 
 rmdir "temp" /s /q
 del "%appname%.xpi"
