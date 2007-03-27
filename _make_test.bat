@@ -37,8 +37,8 @@ IF EXIST ..\install.js GOTO MAKEOLD
 GOTO MAKENEW
 
 :MAKEOLD
-copy ..\ja.inf .\locale.inf
-copy "..\options.%appname%.ja.inf" .\options.inf
+copy d:\data\codes\make-xpi\ja.inf .\locale.inf
+copy "d:\data\codes\make-xpi\options.%appname%.ja.inf" .\options.inf
 chmod -cf 644 *.inf
 
 :MAKENEW

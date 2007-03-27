@@ -37,8 +37,8 @@ IF EXIST ..\install.js GOTO MAKEOLD
 GOTO MAKENEW
 
 :MAKEOLD
-copy ..\ja.inf .\locale.inf
-copy "..\options.%appname%.ja.inf" .\options.inf
+copy d:\data\codes\make-xpi\ja.inf .\locale.inf
+copy "d:\data\codes\make-xpi\options.%appname%.ja.inf" .\options.inf
 chmod -cf 644 *.inf
 
 :MAKENEW
@@ -62,8 +62,8 @@ GOTO DELETETEMPFILES
 
 
 :MAKEENOLD
-copy ..\en.inf .\locale.inf
-copy "..\options.%appname%.en.inf" .\options.inf
+copy d:\data\codes\make-xpi\en.inf .\locale.inf
+copy "d:\data\codes\make-xpi\options.%appname%.en.inf" .\options.inf
 chmod -cf 644 *.inf
 zip -9 "..\%appname%_en.xpi" *.js *.light *.inf *.rdf *.cfg *.manifest
 zip -9 -r "..\%appname%_en.xpi" chrome
