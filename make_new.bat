@@ -34,15 +34,13 @@ IF EXIST ..\install.js GOTO MAKEOLD
 GOTO MAKENEW
 
 :MAKEOLD
-copy ja.inf .\locale.inf
-copy "options.%appname%.ja.inf" .\options.inf
+copy ..\ja.inf .\locale.inf
+copy "..\options.%appname%.ja.inf" .\options.inf
 chmod -cf 644 *.inf
 
 :MAKENEW
 zip -9 "..\%appname%.xpi" *.js *.light *.inf *.rdf *.cfg *.manifest
-zip -9 -r "..\%appname%.xpi" chrome
-zip -9 -r "..\%appname%.xpi" defaults
-zip -9 -r "..\%appname%.xpi" components
+zip -9 -r "..\%appname%.xpi" chrome defaults components
 
 
 
@@ -56,13 +54,11 @@ unlha.exe a -m0 ..\%appname%.lzh ..\%appname%.xpi ..\readme.txt
 
 
 :MAKEENOLD
-copy en.inf .\locale.inf
-copy "options.%appname%.en.inf" .\options.inf
+copy ..\en.inf .\locale.inf
+copy "..\options.%appname%.en.inf" .\options.inf
 chmod -cf 644 *.inf
 zip -9 "..\%appname%_en.xpi" *.js *.light *.inf *.rdf *.cfg *.manifest
-zip -9 -r "..\%appname%_en.xpi" chrome
-zip -9 -r "..\%appname%_en.xpi" defaults
-zip -9 -r "..\%appname%_en.xpi" components
+zip -9 -r "..\%appname%_en.xpi" chrome defaults components
 
 
 
