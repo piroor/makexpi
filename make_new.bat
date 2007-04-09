@@ -14,6 +14,7 @@ xcopy locale temp\locale /i /s
 xcopy skin temp\skin /i /s
 xcopy defaults temp\defaults /i /s
 xcopy components temp\components /i /s
+xcopy chrome temp\chrome /i /s
 xcopy *.js temp\ /i
 xcopy *.rdf temp\ /i
 xcopy *.manifest temp\ /i
