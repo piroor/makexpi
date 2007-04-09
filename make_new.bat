@@ -1,6 +1,14 @@
 setlocal
 set appname=%~n0
 
+rem 証明書データベースのパス
+set certpath=C:\cert
+rem 証明書の名前
+set certname=foobar
+rem データベース生成時のパスワード
+set certpass=passowrd
+
+
 rmdir "jar_temp" /s /q
 rmdir "xpi_temp" /s /q
 del "%appname%.xpi"
@@ -19,8 +27,8 @@ chmod -cfr 644 *.jar *.js *.light *.inf *.rdf *.cfg *.manifest
 
 :MAKEJAR
 rem cd ..
-rem signtool -d "証明書データベースのパス" -k "証明書の名前" -p "パスワード" -Z "chrome\%appname%.jar" jar_temp
-zip -r0 "%appname%.jar" content locale skin
+rem signtool -d "%certpath%" -k "%certname%" -p "%certpass%" -Z "%appname%.jar" jar_temp
+zip -r0 "..\%appname%.jar" content locale skin
 cd ..
 
 
@@ -38,7 +46,7 @@ xcopy *.light xpi_temp\ /i
 cd xpi_temp
 
 mkdir chrome
-xcopy ..\jar_temp\*.jar chrome\ /i /s
+xcopy ..\*.jar chrome\ /i /s
 
 chmod -cfr 644 *.jar *.js *.light *.inf *.rdf *.cfg *.manifest
 
@@ -56,7 +64,7 @@ chmod -cf 644 *.inf
 
 :MAKENEW
 rem cd ..
-rem signtool -d "証明書データベースのパス" -k "証明書の名前" -p "パスワード" -X -Z "..\%appname%.xpi" xpi_temp
+rem signtool -d "%certpath%" -k "%certname%" -p "%certpass%" -X -Z "%appname%.xpi" xpi_temp
 rem cd xpi_temp
 zip -9 "..\%appname%.xpi" *.js *.light *.inf *.rdf *.cfg *.manifest
 zip -9 -r "..\%appname%.xpi" chrome defaults components
@@ -77,7 +85,7 @@ copy ..\en.inf .\locale.inf
 copy "..\options.%appname%.en.inf" .\options.inf
 chmod -cf 644 *.inf
 rem cd ..
-rem signtool -d "証明書データベースのパス" -k "証明書の名前" -p "パスワード" -X -Z "..\%appname%_en.xpi" xpi_temp
+rem signtool -d "%certpath%" -k "%certname%" -p "%certpass%" -X -Z "%appname%_en.xpi" xpi_temp
 rem cd xpi_temp
 zip -9 "..\%appname%_en.xpi" *.js *.light *.inf *.rdf *.cfg *.manifest
 zip -9 -r "..\%appname%_en.xpi" chrome defaults components
@@ -87,6 +95,7 @@ zip -9 -r "..\%appname%_en.xpi" chrome defaults components
 :DELETETEMPFILES
 
 cd ..
+del "%appname%.jar"
 rmdir "jar_temp" /s /q
 rmdir "xpi_temp" /s /q
 
