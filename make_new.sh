@@ -20,7 +20,7 @@ xpi_contents="chrome components defaults *.js *.rdf *.manifest *.inf *.cfg *.lig
 
 rm -r -f xpi_temp
 rm -f $appname.xpi
-rm -f $appname_en.xpi
+rm -f ${appname}_en.xpi
 rm -f $appname.lzh
 
 
@@ -76,7 +76,8 @@ then
 	cp ../en.inf ./locale.inf
 	cp ../options.$appname.en.inf ./options.inf
 	chmod 644 *.inf
-	zip -r -9 ../$appname.xpi $xpi_contents -x \*/.svn/\* || exit 1
+	zip -r -9 ../${appname}_en.xpi $xpi_contents -x \*/.svn/\* || exit 1
+exit
 fi
 
 
