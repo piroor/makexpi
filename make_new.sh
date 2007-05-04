@@ -1,10 +1,15 @@
 #!/bin/sh
 
+
 appname=$1
 if [$appname = '']
+	# スクリプト名でパッケージ名を明示している場合：
+	# スクリプトがパッケージ用のファイル群と一緒に置かれている事を前提に動作
+	cd ${0%/*}
 then
-	appname=$0
-	appname=${appname##/*/}
+	# 引数でパッケージ名を明示している場合：
+	# スクリプトがパッケージ用のファイル群のあるディレクトリで実行されていることを前提に動作
+	appname=${0##*/}
 	appname=${appname%.sh}
 	appname=${appname%_test}
 fi
@@ -56,7 +61,7 @@ fi
 zip -r -9 ../$appname.xpi $xpi_contents -x \*/.svn/\* || exit 1
 
 
-create lzh
+# create lzh
 if [ -f ../readme.txt ]
 then
 	lha a ../$appname.lzh ../$appname.xpi ../readme.txt
