@@ -17,6 +17,7 @@ xcopy locale temp\locale /i /s
 xcopy skin temp\skin /i /s
 xcopy defaults temp\defaults /i /s
 xcopy components temp\components /i /s
+xcopy license temp\license /i /s
 xcopy chrome temp\chrome /i /s
 xcopy *.js temp\ /i
 xcopy *.rdf temp\ /i
@@ -47,6 +48,7 @@ zip -9 "..\%appname%.xpi" *.js *.light *.inf *.rdf *.cfg *.manifest
 zip -9 -r "..\%appname%_test.xpi" chrome
 zip -9 -r "..\%appname%_test.xpi" defaults
 zip -9 -r "..\%appname%_test.xpi" components
+zip -9 -r "..\%appname%_test.xpi" license
 
 
 

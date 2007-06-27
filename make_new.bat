@@ -36,6 +36,7 @@ cd ..
 mkdir xpi_temp
 xcopy defaults xpi_temp\defaults /i /s
 xcopy components xpi_temp\components /i /s
+xcopy license xpi_temp\license /i /s
 xcopy chrome xpi_temp\chrome /i /s
 xcopy *.js xpi_temp\ /i
 xcopy *.rdf xpi_temp\ /i
@@ -67,7 +68,7 @@ rem cd ..
 rem signtool -d "%certpath%" -k "%certname%" -p "%certpass%" -X -Z "%appname%.xpi" xpi_temp
 rem cd xpi_temp
 zip -9 "..\%appname%.xpi" *.js *.light *.inf *.rdf *.cfg *.manifest
-zip -9 -r "..\%appname%.xpi" chrome defaults components
+zip -9 -r "..\%appname%.xpi" chrome defaults components license
 
 
 
@@ -88,7 +89,7 @@ rem cd ..
 rem signtool -d "%certpath%" -k "%certname%" -p "%certpass%" -X -Z "%appname%_en.xpi" xpi_temp
 rem cd xpi_temp
 zip -9 "..\%appname%_en.xpi" *.js *.light *.inf *.rdf *.cfg *.manifest
-zip -9 -r "..\%appname%_en.xpi" chrome defaults components
+zip -9 -r "..\%appname%_en.xpi" chrome defaults components license
 
 
 
