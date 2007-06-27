@@ -45,9 +45,11 @@ xcopy *.cfg xpi_temp\ /i
 xcopy *.light xpi_temp\ /i
 
 cd xpi_temp
-
 mkdir chrome
-xcopy ..\*.jar chrome\ /i /s
+
+cd ..
+xcopy *.jar xpi_temp\chrome\ /i /s
+cd xpi_temp
 
 chmod -cfr 644 *.jar *.js *.light *.inf *.rdf *.cfg *.manifest
 
