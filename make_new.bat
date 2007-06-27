@@ -48,7 +48,7 @@ cd xpi_temp
 mkdir chrome
 
 cd ..
-xcopy *.jar xpi_temp\chrome\ /i /s
+copy "%appname%.jar" xpi_temp\chrome\ /y
 cd xpi_temp
 
 chmod -cfr 644 *.jar *.js *.light *.inf *.rdf *.cfg *.manifest
