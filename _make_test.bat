@@ -36,6 +36,7 @@ xcopy defaults xpi_temp\defaults /i /s
 xcopy components xpi_temp\components /i /s
 xcopy license xpi_temp\license /i /s
 xcopy chrome xpi_temp\chrome /i /s
+xcopy platform xpi_temp\platform /i /s
 xcopy *.js xpi_temp\ /i
 xcopy *.rdf xpi_temp\ /i
 xcopy *.manifest xpi_temp\ /i
@@ -64,7 +65,7 @@ chmod -cf 644 *.inf
 
 :MAKENEW
 zip -9 "..\%appname%_test.xpi" *.js *.light *.inf *.rdf *.cfg *.manifest
-zip -9 -r "..\%appname%_test.xpi" chrome defaults components license
+zip -9 -r "..\%appname%_test.xpi" chrome defaults components license platform
 
 
 

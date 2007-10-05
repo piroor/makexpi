@@ -15,7 +15,7 @@ then
 fi
 
 
-xpi_contents="chrome components defaults license *.js *.rdf *.manifest *.inf *.cfg *.light"
+xpi_contents="chrome components defaults license platform *.js *.rdf *.manifest *.inf *.cfg *.light"
 
 
 rm -r -f xpi_temp
@@ -31,6 +31,7 @@ cp -r chrome ./xpi_temp/
 cp -r components ./xpi_temp/
 cp -r defaults ./xpi_temp/
 cp -r license ./xpi_temp/
+cp -r platform ./xpi_temp/
 cp -r *.rdf ./xpi_temp/
 cp -r *.manifest ./xpi_temp/
 cp -r *.js ./xpi_temp/
