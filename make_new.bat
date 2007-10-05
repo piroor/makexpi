@@ -38,12 +38,29 @@ xcopy defaults xpi_temp\defaults /i /s
 xcopy components xpi_temp\components /i /s
 xcopy license xpi_temp\license /i /s
 xcopy chrome xpi_temp\chrome /i /s
-xcopy platform xpi_temp\platform /i /s
 xcopy *.js xpi_temp\ /i
 xcopy *.rdf xpi_temp\ /i
 xcopy *.manifest xpi_temp\ /i
 xcopy *.cfg xpi_temp\ /i
 xcopy *.light xpi_temp\ /i
+
+:PACKPLATFORMS
+IF EXIST platform (
+	xcopy platform xpi_temp\platform /i /s
+	cd xpi_temp\platform
+	for /D  %%d in (*) do (
+		if exist "%%d\chrome.manifest" (
+			cd %%d
+			mkdir chrome
+			zip -r0 "chrome\%appname%.jar" content locale skin
+			rmdir "content" /s /q
+			rmdir "locale" /s /q
+			rmdir "skin" /s /q
+			cd ..
+		)
+	)
+	cd ..\..
+)
 
 cd xpi_temp
 mkdir chrome
@@ -54,19 +71,14 @@ cd xpi_temp
 
 chmod -cfr 644 *.jar *.js *.light *.inf *.rdf *.cfg *.manifest
 
+
 :MAKEXPI
+IF EXIST ..\install.js (
+	copy ..\ja.inf .\locale.inf
+	copy "..\options.%appname%.ja.inf" .\options.inf
+	chmod -cf 644 *.inf
+)
 
-
-
-IF EXIST ..\install.js GOTO MAKEOLD
-GOTO MAKENEW
-
-:MAKEOLD
-copy ..\ja.inf .\locale.inf
-copy "..\options.%appname%.ja.inf" .\options.inf
-chmod -cf 644 *.inf
-
-:MAKENEW
 rem cd ..
 rem signtool -d "%certpath%" -k "%certname%" -p "%certpass%" -X -Z "%appname%.xpi" xpi_temp
 rem cd xpi_temp
@@ -75,50 +87,38 @@ zip -9 -r "..\%appname%.xpi" chrome defaults components license platform
 
 
 
-IF EXIST ..\readme.txt GOTO MAKELZH
-IF EXIST ..\install.js GOTO MAKEENOLD
-GOTO DELETETEMPFILES
-
 :MAKELZH
-unlha.exe a -m0 ..\%appname%.lzh ..\%appname%.xpi ..\readme.txt
-
-
-IF EXIST ..\install.js GOTO MAKEENOLD
-GOTO DELETETEMPFILES
-
+IF EXIST ..\readme.txt (
+	unlha.exe a -m0 ..\%appname%.lzh ..\%appname%.xpi ..\readme.txt
+)
 
 :MAKEENOLD
-copy ..\en.inf .\locale.inf
-copy "..\options.%appname%.en.inf" .\options.inf
-chmod -cf 644 *.inf
-rem cd ..
-rem signtool -d "%certpath%" -k "%certname%" -p "%certpass%" -X -Z "%appname%_en.xpi" xpi_temp
-rem cd xpi_temp
-zip -9 "..\%appname%_en.xpi" *.js *.light *.inf *.rdf *.cfg *.manifest
-zip -9 -r "..\%appname%_en.xpi" chrome defaults components license platform
+IF EXIST ..\install.js (
+	copy ..\en.inf .\locale.inf
+	copy "..\options.%appname%.en.inf" .\options.inf
+	chmod -cf 644 *.inf
+	rem cd ..
+	rem signtool -d "%certpath%" -k "%certname%" -p "%certpass%" -X -Z "%appname%_en.xpi" xpi_temp
+	rem cd xpi_temp
+	zip -9 "..\%appname%_en.xpi" *.js *.light *.inf *.rdf *.cfg *.manifest
+	zip -9 -r "..\%appname%_en.xpi" chrome defaults components license platform
+)
 
 
 
 :DELETETEMPFILES
-
 cd ..
 del "%appname%.jar"
 rmdir "jar_temp" /s /q
 rmdir "xpi_temp" /s /q
 
 
-IF EXIST meta GOTO COPYFORMETAPACKAGE
-GOTO ENDBATCH
-
-
-
 :COPYFORMETAPACKAGE
-
-del "meta\%appname%.xpi"
-copy "%appname%.xpi" meta\
-
+IF EXIST meta (
+	del "meta\%appname%.xpi"
+	copy "%appname%.xpi" meta\
+)
 
 
 :ENDBATCH
-
 endlocal
