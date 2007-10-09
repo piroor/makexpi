@@ -96,6 +96,9 @@ rmdir "xpi_temp" /s /q
 
 del "o:\xul\xpi\%appname%_test.xpi"
 
+:CREATEHASH
+sha1sum -b %appname%*.xpi > sha1hash.txt
+
 :MOVEFILES
 copy %appname%_test.xpi o:\xul\xpi\
 

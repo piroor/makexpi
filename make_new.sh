@@ -115,6 +115,9 @@ then
 	cp ../$appname.xpi ../meta/$appname.xpi
 fi
 
+# create hash
+sha1sum -b %appname%*.xpi > sha1hash.txt
+
 
 
 

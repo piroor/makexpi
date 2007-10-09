@@ -119,6 +119,9 @@ IF EXIST meta (
 	copy "%appname%.xpi" meta\
 )
 
+:CREATEHASH
+sha1sum -b %appname%*.xpi > sha1hash.txt
+
 
 :ENDBATCH
 endlocal

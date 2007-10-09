@@ -122,6 +122,9 @@ IF EXIST readme.txt (
 	copy %appname%.xpi c:\apps\win\other\mozilla\_packages\%appname%_%DATES%.xpi.zip
 )
 
+:CREATEHASH
+sha1sum -b %appname%*.xpi > sha1hash.txt
+
 :MOVEFILES
 mv %appname%.xpi o:\xul\xpi\
 mv %appname%_en.xpi o:\xul\xpi\
