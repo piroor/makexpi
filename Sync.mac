@@ -1,0 +1,58 @@
+if (basename == "_bookmarks2pane.html" ||
+		basename == "_contentholder.html" ||
+		basename == "_ezsidebar.html" ||
+		basename == "_historycounter.html" ||
+		basename == "_informationaltab.html" ||
+		basename == "_linemarker.html" ||
+		basename == "_multipletab.html" ||
+		basename == "_observeclipboard.html" ||
+		basename == "_policymanager.html" ||
+		basename == "_popupalt.html" ||
+		basename == "_rewindforward.html" ||
+		basename == "_rubysupport.html" ||
+		basename == "_secondsearch.html" ||
+		basename == "_sidebar.html" ||
+		basename == "_splitbrowser.html" ||
+		basename == "_stackstyletabs.html" ||
+		basename == "_tabcatalog.html" ||
+		basename == "_tabkiller.html" ||
+		basename == "_textlink.html" ||
+		basename == "_textshadow.html" ||
+		basename == "_urnsupport.html" ||
+		basename == "_xulmigemo.html" ||
+
+		basename == "_bookmarks2pane.html.en" ||
+		basename == "_contentholder.html.en" ||
+		basename == "_ezsidebar.html.en" ||
+		basename == "_historycounter.html.en" ||
+		basename == "_informationaltab.html.en" ||
+		basename == "_linemarker.html.en" ||
+		basename == "_multipletab.html.en" ||
+		basename == "_observeclipboard.html.en" ||
+		basename == "_policymanager.html.en" ||
+		basename == "_popupalt.html.en" ||
+		basename == "_rewindforward.html.en" ||
+		basename == "_rubysupport.html.en" ||
+		basename == "_secondsearch.html.en" ||
+		basename == "_sidebar.html.en" ||
+		basename == "_splitbrowser.html.en" ||
+		basename == "_stackstyletabs.html.en" ||
+		basename == "_tabcatalog.html.en" ||
+		basename == "_tabkiller.html.en" ||
+		basename == "_textlink.html.en" ||
+		basename == "_textshadow.html.en" ||
+		basename == "_urnsupport.html.en" ||
+		basename == "_xulmigemo.html.en")
+	execmacro "xul_updates.mac";
+else if (
+		strstr(filename, "\\xul\\") > -1 &&
+		(
+			strstr(filename, "\\index.html") > -1 ||
+			strstr(filename, "\\history.html") > -1
+		)
+		)
+	execmacro "xul_updates2.mac";
+
+
+else message "同期可能なファイルではありません";
+endmacro;
