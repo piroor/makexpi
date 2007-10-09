@@ -42,6 +42,30 @@ cp -r content ./xpi_temp/
 cp -r locale ./xpi_temp/
 cp -r skin ./xpi_temp/
 
+
+# pack platform related resources
+if [ -d ./platform ]
+then
+	cp -r platform ./xpi_temp/
+	cd xpi_temp/platform
+
+	for dirname in *
+	do
+		if [ -f $dirname/chrome.manifest ]
+		then
+			cd $dirname
+			mkdir -p chrome
+			zip -r -0 chrome/$appname.jar content locale skin -x \*/.svn/\* || exit 1
+			rm -r -f content
+			rm -r -f locale
+			rm -r -f skin
+			cd ..
+		fi
+	done
+	cd ../..
+fi
+
+
 cd xpi_temp
 chmod -R 644 *.jar *.js *.light *.inf *.rdf *.cfg *.manifest
 
