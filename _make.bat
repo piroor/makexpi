@@ -41,6 +41,24 @@ xcopy *.manifest xpi_temp\ /i
 xcopy *.cfg xpi_temp\ /i
 xcopy *.light xpi_temp\ /i
 
+:PACKPLATFORMS
+IF EXIST platform (
+	xcopy platform xpi_temp\platform /i /s
+	cd xpi_temp\platform
+	for /D  %%d in (*) do (
+		if exist "%%d\chrome.manifest" (
+			cd %%d
+			mkdir chrome
+			zip -r0 "chrome\%appname%.jar" content locale skin
+			rmdir "content" /s /q
+			rmdir "locale" /s /q
+			rmdir "skin" /s /q
+			cd ..
+		)
+	)
+	cd ..\..
+)
+
 cd xpi_temp
 mkdir chrome
 
@@ -51,43 +69,33 @@ cd xpi_temp
 chmod -cfr 644 *.jar *.js *.light *.inf *.rdf *.cfg *.manifest
 
 :MAKEXPI
+IF EXIST ..\install.js (
+	copy ..\ja.inf .\locale.inf
+	copy "..\options.%appname%.ja.inf" .\options.inf
+	chmod -cf 644 *.inf
+)
 
-
-IF EXIST ..\install.js GOTO MAKEOLD
-GOTO MAKENEW
-
-:MAKEOLD
-copy ..\ja.inf .\locale.inf
-copy "..\options.%appname%.ja.inf" .\options.inf
-chmod -cf 644 *.inf
-
-:MAKENEW
 zip -9 "..\%appname%.xpi" *.js *.light *.inf *.rdf *.cfg *.manifest
 zip -9 -r "..\%appname%.xpi" chrome defaults components license platform
 
 
 
-IF EXIST ..\readme.txt GOTO MAKELZH
-IF EXIST ..\install.js GOTO MAKEENOLD
-GOTO DELETETEMPFILES
-
 :MAKELZH
-c:\apps\Dos\unlha\unlha.exe a -m0 ..\%appname%.lzh ..\%appname%.xpi ..\readme.txt
-
-IF EXIST ..\install.js GOTO MAKEENOLD
-GOTO DELETETEMPFILES
-
-
+IF EXIST ..\readme.txt (
+	unlha.exe a -m0 ..\%appname%.lzh ..\%appname%.xpi ..\readme.txt
+)
 
 :MAKEENOLD
-copy ..\en.inf .\locale.inf
-copy "..\options.%appname%.en.inf" .\options.inf
-chmod -cf 644 *.inf
-rem cd ..
-rem signtool -d "%certpath%" -k "%certname%" -p "%certpass%" -X -Z "%appname%_en.xpi" xpi_temp
-rem cd xpi_temp
-zip -9 "..\%appname%_en.xpi" *.js *.light *.inf *.rdf *.cfg *.manifest
-zip -9 -r "..\%appname%_en.xpi" chrome defaults components license platform
+IF EXIST ..\install.js (
+	copy ..\en.inf .\locale.inf
+	copy "..\options.%appname%.en.inf" .\options.inf
+	chmod -cf 644 *.inf
+	rem cd ..
+	rem signtool -d "%certpath%" -k "%certname%" -p "%certpass%" -X -Z "%appname%_en.xpi" xpi_temp
+	rem cd xpi_temp
+	zip -9 "..\%appname%_en.xpi" *.js *.light *.inf *.rdf *.cfg *.manifest
+	zip -9 -r "..\%appname%_en.xpi" chrome defaults components license platform
+)
 
 
 
@@ -108,12 +116,11 @@ del "o:\xul\xpi\%appname%.lzh"
 
 for /F "tokens=1-3 delims=/ " %%a in ('date /t') do set DATES=%%a%%b%%c
 
-IF EXIST readme.txt GOTO COPYLZH
-copy %appname%.xpi c:\apps\win\other\mozilla\_packages\%appname%_%DATES%.xpi.zip
-GOTO MOVEFILES
-
-:COPYLZH
-copy %appname%.lzh c:\apps\win\other\mozilla\_packages\%appname%_%DATES%.lzh
+IF EXIST readme.txt (
+	copy %appname%.lzh c:\apps\win\other\mozilla\_packages\%appname%_%DATES%.lzh
+) ELSE (
+	copy %appname%.xpi c:\apps\win\other\mozilla\_packages\%appname%_%DATES%.xpi.zip
+)
 
 :MOVEFILES
 mv %appname%.xpi o:\xul\xpi\

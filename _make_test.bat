@@ -43,6 +43,24 @@ xcopy *.manifest xpi_temp\ /i
 xcopy *.cfg xpi_temp\ /i
 xcopy *.light xpi_temp\ /i
 
+:PACKPLATFORMS
+IF EXIST platform (
+	xcopy platform xpi_temp\platform /i /s
+	cd xpi_temp\platform
+	for /D  %%d in (*) do (
+		if exist "%%d\chrome.manifest" (
+			cd %%d
+			mkdir chrome
+			zip -r0 "chrome\%appname%.jar" content locale skin
+			rmdir "content" /s /q
+			rmdir "locale" /s /q
+			rmdir "skin" /s /q
+			cd ..
+		)
+	)
+	cd ..\..
+)
+
 cd xpi_temp
 mkdir chrome
 
@@ -53,17 +71,12 @@ cd xpi_temp
 chmod -cfr 644 *.jar *.js *.light *.inf *.rdf *.cfg *.manifest
 
 :MAKEXPI
+IF EXIST ..\install.js (
+	copy ..\ja.inf .\locale.inf
+	copy "..\options.%appname%.ja.inf" .\options.inf
+	chmod -cf 644 *.inf
+)
 
-
-IF EXIST ..\install.js GOTO MAKEOLD
-GOTO MAKENEW
-
-:MAKEOLD
-copy ..\ja.inf .\locale.inf
-copy "..\options.%appname%.ja.inf" .\options.inf
-chmod -cf 644 *.inf
-
-:MAKENEW
 zip -9 "..\%appname%_test.xpi" *.js *.light *.inf *.rdf *.cfg *.manifest
 zip -9 -r "..\%appname%_test.xpi" chrome defaults components license platform
 
