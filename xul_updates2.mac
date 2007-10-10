@@ -1,41 +1,72 @@
-//XULアプリの更新状況をRSS化2 
+// XULアプリの更新状況をRSS化2 
+
+// 動作に必要な物：
+//    APPNAME\index.html      : 日本語版の配布ページのHTML
+//    APPNAME\index.html.en   : 英語版の配布ページのHTML
+//    APPNAME\history.html    : 日本語版の更新履歴ページのHTML
+//    APPNAME\history.html.en : 英語版の更新履歴ページのHTML
+//    xul.xml                 : 日本語版の更新情報RSS
+//    xul.xml.en              : 英語版の更新情報RSS
+
+$workdir   = "o:\\xul";         // 作業ディレクトリ
+$hashname  = "sha1hash.txt";    // ハッシュ値が記述されているファイルの名前
+$hashroot  = "d:\\data\\codes"; // $hash が作業ディレクトリ以外の場所にある場合の、ファイルのありか
+$htmlextja = ".html";           // 日本語版HTMLの拡張子
+$htmlexten = ".html.en";        // 英語版HTMLの拡張子
+$xpiextja  = ".xpi";            // 日本語版XPIの拡張子
+$xpiexten  = "_en.xpi";         // 英語版XPIの拡張子
+$rssja     = "xul.xml";         // 日本語版RSSのファイル名
+$rssen     = "xul.xml.en";      // 英語版RSSのファイル名
+$htmldist  = "http://piro.sakura.ne.jp/xul"; // HTMLファイルを公開する時のパス
+$xpidist   = "http://piro.sakura.ne.jp/xul/xpi"; // XPIファイルを公開する時のパス
+$tempdir   = "c:\\temp";        // 作業中に一時ファイルを置くディレクトリ
 	
 //初期化 
-#startX = x;
-#startY = y;
 
-$datapath = "o:\\xul";
 $filename = filename;
-
-$rssfilename = "o:\\xul\\xul.xml";
-if (strstr($filename, ".html.en") > -1)
-	$rssfilename = "o:\\xul\\xul.xml.en";
+if (!existfile($workdir)) {
+	$workdir = directory;
+}
 
 $appname = rightstr(filename, strlen(filename)-strstr(filename, "\\xul\\")-5);
 $appname = leftstr($appname, strstr($appname, "\\"));
+
+call createRSSFromHTML2 $workdir + "\\" + $appname + "\\index" + $htmlextja, $workdir + "\\" + $appname + "\\history" + $htmlextja, $workdir + "\\" + $rssja;
+call createRSSFromHTML2 $workdir + "\\" + $appname + "\\index" + $htmlexten, $workdir + "\\" + $appname + "\\history" + $htmlexten, $workdir + "\\" + $rssen;
+
+call copyTo $workdir + "\\" + $rssen, $workdir + "\\update.rdf";
+
+endmacro;
  
-//RSS生成：記事を取得 
+// RSS生成 
 
-// タイトル取得
-#shouldClose     = 0;
-#shouldMoveFocus = 0;
-if (strstr($filename, "index.html") < 0) {
-	#shouldMoveFocus = 1;
-	if (strstr($filename, ".html.en") < 0)
-		$openFileName = directory+"\\index.html";
-	else
-		$openFileName = directory+"\\index.html.en";
+// 引数：
+//  $$1 : index.html(.en)ファイルのパス
+//  $$2 : history.html(.en)ファイルのパス
+//  $$3 : RSSファイルのパス
 
-	if (findhidemaru($openFileName) == -1) {
-		openfile $openFileName;
-		#shouldClose = 1;
-	}
-	else {
-		setactivehidemaru findhidemaru($openFileName);
-	}
-	disabledraw;
+createRSSFromHTML2:
+	
+// 情報を取得 
+	 
+// index.htmlの初期化 
+
+#startX = x;
+#startY = y;
+#shouldClose = 0;
+
+if (filename != $$1 && findhidemaru($$1) == -1) {
+	openfile $$1;
+	#shouldClose = 1;
+}
+setactivehidemaru findhidemaru($$1);
+if (#shouldClose == 1) {
+	setwindowsize 1, 1;
 }
 
+disabledraw;
+ 
+// タイトル取得 
 gofiletop;
 searchdown "<h1";
 escape;
@@ -50,7 +81,7 @@ $title = gettext(#topx, #topy, x, y);
 call openTempWin;
 
 insert $title;
-if (strstr($filename, ".html.en") < 0)
+if (strstr($$1, $htmlexten) < 0)
 	replaceallfast "\\t+<h1>[- _a-zA-Z0-9]+\\n", "", regular;
 replaceallfast "<[^>]+>", "", regular;
 replaceallfast "\\t", "", regular;
@@ -58,48 +89,44 @@ replaceallfast "\\n", " ", regular;
 selectall;
 $title = gettext(seltopx, seltopy, selendx, selendy);
 
-call closeTempWin;
-
-if (#shouldMoveFocus == 1) {
-	$closeFile = filename;
-	setactivehidemaru findhidemaru($filename);
-	if (#shouldClose == 1) {
-		closehidemaruforced findhidemaru($closeFile);
-	}
-	disabledraw;
-}
-
-
-// URL取得
-$link = "http://piro.sakura.ne.jp/xul/"+$appname+"/";
-if (strstr($filename, ".html.en") < 0)
-	$link = $link+"index.html";
+call closeTempWin $$1;
+ 
+// URL取得 
+if (strstr($$1, $htmlexten) < 0)
+	$link = $link+"index" + $htmlextja;
 else
-	$link = $link+"index.html.en";
+	$link = $link+"index" + $htmlexten;
+ 
+// index.htmlの終了処理 
 
+if (#shouldClose == 1) {
+	setactivehidemaru findhidemaru($filename);
+	closehidemaruforced findhidemaru($$1);
+	disabledraw;
+} else {
+	setactivehidemaru findhidemaru($$1);
+	moveto #startX, #startY;
+	enabledraw;
+}
+ 
+// history.htmlの初期化 
 
-// 更新内容取得
-#shouldClose     = 0;
-#shouldMoveFocus = 0;
-if (existfile(directory+"\\history.html")) {
-	if (strstr($filename, "history.html") < 0) {
-		#shouldMoveFocus = 1;
-		if (strstr($filename, ".html.en") < 0)
-			$openFileName = directory+"\\history.html";
-		else
-			$openFileName = directory+"\\history.html.en";
+#startX = x;
+#startY = y;
+#shouldClose = 0;
 
-		if (findhidemaru($openFileName) == -1) {
-			openfile $openFileName;
-			#shouldClose = 1;
-		}
-		else {
-			setactivehidemaru findhidemaru($openFileName);
-		}
-		disabledraw;
-	}
+if (filename != $$2 && findhidemaru($$2) == -1) {
+	openfile $$2;
+	#shouldClose = 1;
+}
+setactivehidemaru findhidemaru($$2);
+if (#shouldClose == 1) {
+	setwindowsize 1, 1;
 }
 
+disabledraw;
+ 
+// 更新内容取得 
 call searchNodeById "history";
 searchdown "<dd><ul>";
 escape;
@@ -134,56 +161,69 @@ if (strlen($desc) > 80) {
 	}
 }
 
-call closeTempWin;
+call closeTempWin $$1;
+ 
+// history.htmlの終了処理 
 
-if (#shouldMoveFocus == 1) {
-	$closeFile = filename;
+if (#shouldClose == 1) {
 	setactivehidemaru findhidemaru($filename);
-	if (#shouldClose == 1) {
-		closehidemaruforced findhidemaru($closeFile);
-	}
+	closehidemaruforced findhidemaru($$2);
 	disabledraw;
+} else {
+	setactivehidemaru findhidemaru($$2);
+	moveto #startX, #startY;
+	enabledraw;
 }
-
-
-// ハッシュ値取得
+ 
+// ハッシュ値取得 
 $hash   = "";
 $hashen = "";
 
-$hashfile = "D:\\data\\codes\\" + $appname + "\\sha1hash.txt";
-openfile $hashfile;
-disabledraw;
+if (existfile($hashroot + "\\" + $appname + "\\" + $hashname)) $hashfile = $hashroot + "\\" + $appname + "\\" + $hashname;
+else if (existfile($hashroot + "\\" + $hashname)) $hashfile = $hashroot + "\\" + $hashname;
+else if (existfile($workdir + "\\" + $appname + "\\" + $hashname)) $hashfile = $workdir + "\\" + $appname + "\\" + $hashname;
+else $hashfile = $workdir + "\\" + $hashname;
 
-#topx = x;
-#topy = y;
-searchdown "*"+$appname+".xpi";
-if (x > #topx) {
-	searchup " ";
-	beginsel;
-	golinetop;
-	$hash = gettext(seltopx, seltopy, selendx, selendy);;
-	escape;
-	gofiletop;
+if (existfile($hashfile)) {
+	openfile $hashfile;
+	setactivehidemaru findhidemaru($hashfile);
+	setwindowsize 1, 1;
+	disabledraw;
+
+	#topx = x;
+	#topy = y;
+	searchdown "*"+$appname+".xpi";
+	if (x > #topx || y > #topy) {
+		searchup " ";
+		beginsel;
+		golinetop;
+		$hash = gettext(seltopx, seltopy, selendx, selendy);;
+		escape;
+		gofiletop;
+	}
+
+	searchdown "*"+$appname+"_en.xpi";
+	if (x > #topx || y > #topy) {
+		searchup " ";
+		beginsel;
+		golinetop;
+		$enhash = gettext(seltopx, seltopy, selendx, selendy);;
+		escape;
+		gofiletop;
+	}
+
+	setactivehidemaru findhidemaru($filename);
+	closehidemaruforced findhidemaru($hashfile);
+	disabledraw;
 }
-
-searchdown "*"+$appname+"_en.xpi";
-if (x > #topx) {
-	searchup " ";
-	beginsel;
-	golinetop;
-	$enhash = gettext(seltopx, seltopy, selendx, selendy);;
-	escape;
-	gofiletop;
-}
-
-setactivehidemaru findhidemaru($filename);
-closehidemaruforced findhidemaru($hashfile);
+  
+// ファイル更新 
+openfile $$3;
+setactivehidemaru findhidemaru($$3);
+setwindowsize 1, 1;
 disabledraw;
-
- 
-//RSS生成：ファイル更新 
-openfile $rssfilename;
-disabledraw;
+	 
+// 日付更新 
 
 gofiletop;
 searchdown "<dc:date>";
@@ -198,15 +238,15 @@ beginsel;
 moveto #topx, #topy;
 delete;
 insert year+"-"+month+"-"+day+"T"+time+"+09:00";
+ 
+// liの移動 
 
-
-//liの移動
 searchdown "<rdf:li rdf:resource=\""+$link+"\"/>";
 escape;
 golineend2;
 right;
 beginsel;
-left;
+up;
 golinetop2;
 $newli = gettext(seltopx, seltopy, selendx, selendy);
 escape;
@@ -221,9 +261,9 @@ escape;
 golineend2;
 right;
 insert $newli;
+ 
+// itemの更新 
 
-
-//itemの更新
 searchdown "<item rdf:about=\""+$link+"\">";
 escape;
 
@@ -265,7 +305,7 @@ insert year+"-"+month+"-"+day+"T"+time+"+09:00";
 
 
 #topx = x; #topy = y;
-searchdown "http://piro.sakura.ne.jp/xul/xpi/" + $appname + "_en.xpi?update";
+searchdown $xpidist + "/" + $appname + "_en.xpi";
 if (y > #topy) {
 	$hash = $hashen;
 }
@@ -282,7 +322,6 @@ beginsel;
 moveto #topx, #topy;
 delete;
 insert $hash;
-
 
 searchdown "</item>";
 #endy = y;
@@ -330,30 +369,51 @@ golinetop;
 down 2;
 escape;
 insert $item;
-
+  
+// 終了処理 
 save;
 
-setactivehidemaru findhidemaru($filename);
-closehidemaruforced findhidemaru($rssfilename);
- 
-//終了処理 
-enabledraw;
-moveto #startX, #startY;
-endmacro;
+if (#shouldClose == 1) {
+	setactivehidemaru findhidemaru($filename);
+	closehidemaruforced findhidemaru($$1);
+	closehidemaruforced findhidemaru($$2);
+	closehidemaruforced findhidemaru($$3);
+} else {
+	setactivehidemaru findhidemaru($filename);
+	closehidemaruforced findhidemaru($$3);
+	moveto #startX, #startY;
+}
 
-// 関数
-openTempWin: 
-	$parentWindowOfTempWin = filename;
-	openfile "c:\\temp\\hdtemp.txt";
+enabledraw;
+return;
+  
+// ユーティリティ関数 
+openTempWin:
+	if (!existfile($tempdir)) $tempdir = $workdir;
+	openfile $tempdir + "\\hdtemp.txt";
+	setactivehidemaru findhidemaru($tempdir + "\\hdtemp.txt");
+	setwindowsize 1, 1;
 	disabledraw;
 	selectall;
 	delete;
 return;
 
-closeTempWin: 
-	setactivehidemaru findhidemaru($parentWindowOfTempWin);
-	closehidemaruforced findhidemaru( "c:\\temp\\hdtemp.txt" );
+// $$1 : 戻り先ウィンドウのファイルパス
+closeTempWin:
+	setactivehidemaru findhidemaru($$1);
+	if (!existfile($tempdir)) $tempdir = $workdir;
+	closehidemaruforced findhidemaru($tempdir + "\\hdtemp.txt");
 	disabledraw;
+return;
+
+// $$1 : 元ファイルのフルパス
+// $$2 : コピー先のフルパス
+copyTo:
+	openfile $$1;
+	setwindowsize 1, 1;
+	saveas $$2;
+	setactivehidemaru findhidemaru($filename);
+	closehidemaruforced findhidemaru($$2);
 return;
   
 //==========================================================
@@ -366,13 +426,13 @@ return;
 //==========================================================
 // 既存ノードを操作する 
 //----------------------------------------------------------
-	
+	 
 //==========================================================
 // 検索 
 //----------------------------------------------------------
 // ノードを検索し、ノードの先頭へ移動します。
 //----------------------------------------------------------
-	
+	 
 //----------------------------------------------------------
 searchNodeByTagName: 
 
