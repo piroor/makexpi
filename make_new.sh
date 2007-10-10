@@ -21,6 +21,8 @@ xpi_contents="chrome components defaults license platform *.js *.rdf *.manifest 
 rm -r -f xpi_temp
 rm -f $appname.xpi
 rm -f ${appname}_en.xpi
+rm -f ${appname}_noupdate.xpi
+rm -f ${appname}_noupdate_en.xpi
 rm -f $appname.lzh
 
 
@@ -86,6 +88,12 @@ fi
 #create xpi (Japanese)
 zip -r -9 ../$appname.xpi $xpi_contents -x \*/.svn/\* || exit 1
 
+#create xpi without update info (Japanese)
+rm -f install.rdf
+sed -e "s#^.*<em:*\(updateURL\|updateKey\)>.*</em:*\(updateURL\|updateKey\)>##g" -e "s#^.*em:*\(updateURL\|updateKey\)=\(\".*\"\|'.*'\)##g" ../install.rdf > install.rdf
+zip -r -9 ../${appname}_noupdate.xpi $xpi_contents -x \*/.svn/\* || exit 1
+
+
 
 # create lzh
 if [ -f ../readme.txt ]
@@ -97,13 +105,18 @@ fi
 #create xpi (English)
 if [ -f ./install.js ]
 then
+	rm -f install.rdf
 	rm -f locale.inf
 	rm -f options.inf
+	cp ../install.rdf ./install.rdf
 	cp ../en.inf ./locale.inf
 	cp ../options.$appname.en.inf ./options.inf
 	chmod 644 *.inf
 	zip -r -9 ../${appname}_en.xpi $xpi_contents -x \*/.svn/\* || exit 1
-exit
+
+	rm -f install.rdf
+	sed -e "s#^.*<em:*\(updateURL\|updateKey\)>.*</em:*\(updateURL\|updateKey\)>##g" -e "s#^.*em:*\(updateURL\|updateKey\)=\(\".*\"\|'.*'\)##g" ../install.rdf > install.rdf
+	zip -r -9 ../${appname}_noupdate_en.xpi $xpi_contents -x \*/.svn/\* || exit 1
 fi
 
 
@@ -115,14 +128,11 @@ then
 	cp ../$appname.xpi ../meta/$appname.xpi
 fi
 
-# create hash
-sha1sum -b %appname%*.xpi > sha1hash.txt
-
-
-
-
 # end
 cd ..
 rm -r -f xpi_temp
+
+# create hash
+sha1sum -b ${appname}*.xpi > sha1hash.txt
 
 exit 1;

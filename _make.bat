@@ -8,6 +8,8 @@ rmdir "jar_temp" /s /q
 rmdir "xpi_temp" /s /q
 del "%appname%.xpi"
 del "%appname%_en.xpi"
+del "%appname%_noupdate.xpi"
+del "%appname%_noupdate_en.xpi"
 del "%appname%.lzh"
 
 
@@ -74,9 +76,12 @@ IF EXIST ..\install.js (
 	copy "..\options.%appname%.ja.inf" .\options.inf
 	chmod -cf 644 *.inf
 )
-
 zip -9 "..\%appname%.xpi" *.js *.light *.inf *.rdf *.cfg *.manifest
 zip -9 -r "..\%appname%.xpi" chrome defaults components license platform
+
+sed -e "s#^.*<em:*\(updateURL\|updateKey\)>.*</em:*\(updateURL\|updateKey\)>##g" -e "s#^.*em:*\(updateURL\|updateKey\)=\(\".*\"\|'.*'\)##g" ..\install.rdf > install.rdf
+zip -9 "..\%appname%_noupdate.xpi" *.js *.light *.inf *.rdf *.cfg *.manifest
+zip -9 -r "..\%appname%_noupdate.xpi" chrome defaults components license platform
 
 
 
@@ -87,14 +92,16 @@ IF EXIST ..\readme.txt (
 
 :MAKEENOLD
 IF EXIST ..\install.js (
+	copy ..\install.rdf .\install.rdf
 	copy ..\en.inf .\locale.inf
 	copy "..\options.%appname%.en.inf" .\options.inf
 	chmod -cf 644 *.inf
-	rem cd ..
-	rem signtool -d "%certpath%" -k "%certname%" -p "%certpass%" -X -Z "%appname%_en.xpi" xpi_temp
-	rem cd xpi_temp
 	zip -9 "..\%appname%_en.xpi" *.js *.light *.inf *.rdf *.cfg *.manifest
 	zip -9 -r "..\%appname%_en.xpi" chrome defaults components license platform
+
+	sed -e "s#^.*<em:*\(updateURL\|updateKey\)>.*</em:*\(updateURL\|updateKey\)>##g" -e "s#^.*em:*\(updateURL\|updateKey\)=\(\".*\"\|'.*'\)##g" ..\install.rdf > install.rdf
+	zip -9 "..\%appname%_noupdate_en.xpi" *.js *.light *.inf *.rdf *.cfg *.manifest
+	zip -9 -r "..\%appname%_noupdate_en.xpi" chrome defaults components license platform
 )
 
 
