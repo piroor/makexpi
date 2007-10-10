@@ -7,10 +7,13 @@
 //    APPNAME\history.html.en : 英語版の更新履歴ページのHTML
 //    xul.xml                 : 日本語版の更新情報RSS
 //    xul.xml.en              : 英語版の更新情報RSS
+//
+// index.html(.en) または history.html(.en) でこのマクロを実行すると、
+// xul.xml と xul.xml.en が更新される。
 
 $workdir   = "o:\\xul";         // 作業ディレクトリ
 $hashname  = "sha1hash.txt";    // ハッシュ値が記述されているファイルの名前
-$hashroot  = "d:\\data\\codes"; // $hash が作業ディレクトリ以外の場所にある場合の、ファイルのありか
+$hashroot  = "d:\\data\\codes"; // $hashname が作業ディレクトリ以外の場所にある場合の、ファイルのありか
 $htmlextja = ".html";           // 日本語版HTMLの拡張子
 $htmlexten = ".html.en";        // 英語版HTMLの拡張子
 $xpiextja  = ".xpi";            // 日本語版XPIの拡張子
