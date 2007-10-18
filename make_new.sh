@@ -135,4 +135,4 @@ rm -r -f xpi_temp
 # create hash
 sha1sum -b ${appname}*.xpi > sha1hash.txt
 
-exit 1;
+exit 0;
