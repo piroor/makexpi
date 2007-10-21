@@ -153,7 +153,7 @@ if (existfile($hashfile)) {
 	if (x > #topx || y > #topy) {
 		searchup " ";
 		beginsel;
-		golinetop;
+		golinetop2;
 		$hash = gettext(seltopx, seltopy, selendx, selendy);;
 		escape;
 		gofiletop;
@@ -163,8 +163,8 @@ if (existfile($hashfile)) {
 	if (x > #topx || y > #topy) {
 		searchup " ";
 		beginsel;
-		golinetop;
-		$enhash = gettext(seltopx, seltopy, selendx, selendy);;
+		golinetop2;
+		$hashen = gettext(seltopx, seltopy, selendx, selendy);;
 		escape;
 		gofiletop;
 	}
@@ -261,25 +261,6 @@ delete;
 insert year+"-"+month+"-"+day+"T"+time+"+09:00";
 
 
-#topx = x; #topy = y;
-searchdown $xpidist + "/" + $appname + $xpiexten;
-if (y > #topy) {
-	$hash = $hashen;
-}
-escape;
-
-searchdown "<em:updateHash>sha1:";
-escape;
-right 20;
-#topx = x; #topy = y;
-left;
-searchdown "</em:updateHash>";
-escape;
-beginsel;
-moveto #topx, #topy;
-delete;
-insert $hash;
-
 searchdown "</item>";
 #endy = y;
 moveto #topx, #topy;
@@ -305,14 +286,34 @@ else {
 }
 
 
+#topx = x; #topy = y;
+searchdown $xpidist + "/" + $appname + $xpiexten;
+if (y > #topy) {
+	$hash = $hashen;
+}
+escape;
+
+searchdown "<em:updateHash>sha1:";
+escape;
+right 20;
+#topx = x; #topy = y;
+left;
+searchdown "</em:updateHash>";
+escape;
+beginsel;
+moveto #topx, #topy;
+delete;
+insert $hash;
+
 
 searchup "<item";
 escape;
-golinetop;
+golinetop2;
 beginsel;
 searchdown "</item>";
-golinetop;
+golineend2;
 down 2;
+golinetop2;
 #topx = seltopx;
 #topy = seltopy;
 $item = gettext(#topx, #topy, selendx, selendy);
@@ -322,8 +323,9 @@ moveto #topx, #topy;
 delete;
 
 searchup "</channel>";
-golinetop;
+golineend2;
 down 2;
+golinetop2;
 escape;
 insert $item;
   

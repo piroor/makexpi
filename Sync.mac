@@ -18,6 +18,7 @@ if (basename == "_bookmarks2pane.html" ||
 		basename == "_tabkiller.html" ||
 		basename == "_textlink.html" ||
 		basename == "_textshadow.html" ||
+		basename == "_treestyletab.html" ||
 		basename == "_urnsupport.html" ||
 		basename == "_xulmigemo.html" ||
 
@@ -41,6 +42,7 @@ if (basename == "_bookmarks2pane.html" ||
 		basename == "_tabkiller.html.en" ||
 		basename == "_textlink.html.en" ||
 		basename == "_textshadow.html.en" ||
+		basename == "_treestyletab.html.en" ||
 		basename == "_urnsupport.html.en" ||
 		basename == "_xulmigemo.html.en")
 	execmacro "xul_updates.mac";
