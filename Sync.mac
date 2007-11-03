@@ -1,4 +1,5 @@
-if (basename == "_bookmarks2pane.html" ||
+if (basename == "_bfthumbnail.html" ||
+	basename == "_bookmarks2pane.html" ||
 		basename == "_contentholder.html" ||
 		basename == "_ezsidebar.html" ||
 		basename == "_historycounter.html" ||
@@ -23,6 +24,7 @@ if (basename == "_bookmarks2pane.html" ||
 		basename == "_viewsourceintab.html" ||
 		basename == "_xulmigemo.html" ||
 
+		basename == "_bfthumbnail.html.en" ||
 		basename == "_bookmarks2pane.html.en" ||
 		basename == "_contentholder.html.en" ||
 		basename == "_ezsidebar.html.en" ||
