@@ -45,7 +45,6 @@ xcopy *.light xpi_temp\ /i
 
 :PACKPLATFORMS
 IF EXIST platform (
-	xcopy platform xpi_temp\platform /i /s
 	cd xpi_temp\platform
 	for /D  %%d in (*) do (
 		if exist "%%d\chrome.manifest" (
