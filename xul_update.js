@@ -26,6 +26,9 @@ var rssEnFile    = 'xul.xml.en';
 var hashFile  = 'sha1hash.txt';
 var updateRes = 'update.rdf';
 
+var updateInfoPostPassword = '';
+var updateInfoPostURI = 'http://piro.sakura.ne.jp/wiki/wiki.cgi/extensions/%appname%/%lang%/%version%.wikieditish';
+
 // =============================================================================
 
 
@@ -38,17 +41,16 @@ var UCONV = Components
 			.classes['@mozilla.org/intl/scriptableunicodeconverter']
 			.getService(Components.interfaces.nsIScriptableUnicodeConverter);
 
-function HTMLToRSSConverter(aHTMLFile, aRSSFile, aHashFile, aAnotherOutput)
+function HTMLToRSSConverter(aHTMLFile, aRSSFile, aLang, aHashFile, aAnotherOutput)
 {
 	this.html    = aHTMLFile;
 	this.rss     = aRSSFile;
+	this.lang    = aLang;
 	this.hash    = aHashFile;
 	this.another = aAnotherOutput;
 	this.init();
 }
 HTMLToRSSConverter.prototype = {
-	updatesPrefix : '* ',
-
 	init : function()
 	{
 		var date = new Date();
@@ -77,6 +79,7 @@ HTMLToRSSConverter.prototype = {
 		this.loadRSS();
 		this.updateRSS();
 		this.saveRSS();
+		this.postUpdateInfo();
 	},
 
 	loadHash : function()
@@ -302,6 +305,37 @@ HTMLToRSSConverter.prototype = {
 		);
 	},
 
+	postUpdateInfo : function()
+	{
+		if (!updateInfoPostPassword) return;
+
+		var uri = updateInfoPostURI
+					.replace(/%appname%/gi, this.appName)
+					.replace(/%lang%/gi, this.lang)
+					.replace(/%version%/gi, this.version);
+
+		var params = [
+				'plugin=wikieditish',
+				'title='+encodeURIComponent(this.version),
+				'body='+encodeURIComponent(
+					this.updatesString.map(function(aItem) {
+						return ' * '+aItem;
+					}).join('\n')
+				),
+				'creation_date=',
+				'password='+encodeURIComponent(updateInfoPostPassword),
+				'post='+encodeURIComponent('\u30da\u30fc\u30b8\u3092\u4fdd\u5b58')
+			].join('&');
+
+		var request = Components.classes['@mozilla.org/xmlextras/xmlhttprequest;1']
+					.createInstance(Components.interfaces.nsIXMLHttpRequest);
+		request.open('POST', uri, true);
+		request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+		request.send(params);
+	},
+
+	// utilities
+
 	readFrom : function(aFile)
 	{
 		if (typeof aFile == 'string') {
@@ -505,5 +539,7 @@ if (!tempLocalFile.exists()) {
 }
 
 
-new HTMLToRSSConverter(htmlJa, rssJa, hashPath);
-new HTMLToRSSConverter(htmlEn, rssEn, hashPath, updateRes);
+if (!updateInfoPostPassword) updateInfoPostPassword = prompt('\u6295\u7a3f\u7528\u30d1\u30b9\u30ef\u30fc\u30c9\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044');
+
+new HTMLToRSSConverter(htmlJa, rssJa, 'ja', hashPath);
+new HTMLToRSSConverter(htmlEn, rssEn, 'en-US', hashPath, updateRes);
