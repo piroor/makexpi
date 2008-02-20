@@ -131,7 +131,7 @@ HTMLToRSSConverter.prototype = {
 	loadRSS : function()
 	{
 		var source = this.readFrom(this.rss);
-		/<?xml\s.*encoding=['"](['"]+)['"]/.test(source);
+		/^<\?xml\s.*encoding=['"]([^'"]+)['"]/.test(source);
 		var encoding = RegExp.$1 || 'UTF-8';
 		UCONV.charset = encoding;
 		source = UCONV.ConvertToUnicode(source);
@@ -514,12 +514,6 @@ if (!tempLocalFile.exists()) {
 			rssJa = null;
 		}
 	}
-	else {
-		rssJa = null;
-	}
-}
-else {
-	rssJa = null;
 }
 var rssEn = rssJa ? rssJa.replace(/[^\/\\]+$/, rssEnFile) : null ;
 
