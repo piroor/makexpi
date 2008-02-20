@@ -76,9 +76,11 @@ HTMLToRSSConverter.prototype = {
 		this.loadHash();
 		this.loadHTML();
 		this.getUpdateInfo();
-		this.loadRSS();
-		this.updateRSS();
-		this.saveRSS();
+		if (this.rss) {
+			this.loadRSS();
+			this.updateRSS();
+			this.saveRSS();
+		}
 		this.postUpdateInfo();
 	},
 
@@ -316,7 +318,7 @@ HTMLToRSSConverter.prototype = {
 
 		var params = [
 				'plugin=wikieditish',
-				'title='+encodeURIComponent(this.version),
+				'title='+encodeURIComponent(this.appName+' '+this.version),
 				'body='+encodeURIComponent(
 					this.updatesString.map(function(aItem) {
 						return ' * '+aItem;
@@ -505,35 +507,47 @@ if (!tempLocalFile.exists()) {
 			'\u53cd\u6620\u5148\u306eRSS\u30d5\u30a1\u30a4\u30eb\u3092\u9078\u629e\u3057\u3066\u304f\u3060\u3055\u3044',
 			filePicker.modeSave
 		);
-		if (filePicker.show() == filePicker.returnCancel) return;
-		rssJa = filePicker.file.path;
-		if (!(new RegExp(rssJaFile+'$')).test(rssJa)) return;
+		if (filePicker.show() != filePicker.returnCancel) {
+			rssJa = filePicker.file.path;
+		}
+		else {
+			rssJa = null;
+		}
+	}
+	else {
+		rssJa = null;
 	}
 }
-var rssEn = rssJa.replace(/[^\/\\]+$/, rssEnFile);
+else {
+	rssJa = null;
+}
+var rssEn = rssJa ? rssJa.replace(/[^\/\\]+$/, rssEnFile) : null ;
 
 
 // select Hash
 
-defaultHashDir = defaultHashDir.replace(/%appname%/gi, appName);
+var hashPath;
+if (rssJa && rssEn) {
+	defaultHashDir = defaultHashDir.replace(/%appname%/gi, appName);
 
-var hashPath = defaultHashDir + hashFile;
-tempLocalFile.initWithPath(hashPath);
-if (!tempLocalFile.exists()) {
-	hashPath = htmlJa.replace(/[^\/\\]+$/, hashFile);
+	hashPath = defaultHashDir + hashFile;
 	tempLocalFile.initWithPath(hashPath);
 	if (!tempLocalFile.exists()) {
-		hashPath = rssJa.replace(/[^\/\\]+$/, hashFile);
+		hashPath = htmlJa.replace(/[^\/\\]+$/, hashFile);
 		tempLocalFile.initWithPath(hashPath);
 		if (!tempLocalFile.exists()) {
-			filePicker.init(
-				window,
-				'\u30cf\u30c3\u30b7\u30e5\u30d5\u30a1\u30a4\u30eb\u3092\u9078\u629e\u3057\u3066\u304f\u3060\u3055\u3044',
-				filePicker.modeOpen
-			);
-			if (filePicker.show() == filePicker.returnCancel) return;
-			hashPath = filePicker.file.path;
-			if (!(new RegExp(hashFile+'$')).test(hashPath)) return;
+			hashPath = rssJa.replace(/[^\/\\]+$/, hashFile);
+			tempLocalFile.initWithPath(hashPath);
+			if (!tempLocalFile.exists()) {
+				filePicker.init(
+					window,
+					'\u30cf\u30c3\u30b7\u30e5\u30d5\u30a1\u30a4\u30eb\u3092\u9078\u629e\u3057\u3066\u304f\u3060\u3055\u3044',
+					filePicker.modeOpen
+				);
+				if (filePicker.show() == filePicker.returnCancel) return;
+				hashPath = filePicker.file.path;
+				if (!(new RegExp(hashFile+'$')).test(hashPath)) return;
+			}
 		}
 	}
 }
