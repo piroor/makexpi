@@ -131,8 +131,8 @@ HTMLToRSSConverter.prototype = {
 	loadRSS : function()
 	{
 		var source = this.readFrom(this.rss);
-		/^<\?xml\s.*encoding=['"]([^'"]+)['"]/.test(source);
-		var encoding = RegExp.$1 || 'UTF-8';
+		var found = /^<\?xml\s.*encoding=['"]([^'"]+)['"]/.test(source);
+		var encoding = found ? RegExp.$1 : 'UTF-8';
 		UCONV.charset = encoding;
 		source = UCONV.ConvertToUnicode(source);
 		var parser = new DOMParser();
