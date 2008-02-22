@@ -31,7 +31,7 @@ var updateInfoPostURI = 'http://piro.sakura.ne.jp/wiki/wiki.cgi/extensions/%appn
 
 // =============================================================================
 
-
+var DEBUG = false;
 
 var IOService = Components
 			.classes['@mozilla.org/network/io-service;1']
@@ -79,9 +79,9 @@ HTMLToRSSConverter.prototype = {
 		if (this.rss) {
 			this.loadRSS();
 			this.updateRSS();
-			this.saveRSS();
+			if (!DEBUG) this.saveRSS();
 		}
-		this.postUpdateInfo();
+		if (!DEBUG) this.postUpdateInfo();
 	},
 
 	loadHash : function()
@@ -97,6 +97,15 @@ HTMLToRSSConverter.prototype = {
 			source = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">\n'+source;
 		var parser = new DOMParser();
 		this.htmlDoc = parser.parseFromString(source, 'text/xml');
+
+		if (!this.htmlDoc.documentElement) {
+			alert(this.html+'\n\u4e0d\u6b63\u306aHTML\u3067\u3059');
+			return;
+		}
+		else if (this.htmlDoc.documentElement.localName == 'parsererror') {
+			alert(this.html+'\n\n'+this.htmlDoc.documentElement.textContent);
+			return;
+		}
 	},
 
 	getUpdateInfo : function()
@@ -139,6 +148,15 @@ HTMLToRSSConverter.prototype = {
 		source = UCONV.ConvertToUnicode(source);
 		var parser = new DOMParser();
 		this.rssDoc = parser.parseFromString(source, 'text/xml');
+
+		if (!this.rssDoc.documentElement) {
+			alert(this.rss+'\n\u4e0d\u6b63\u306aRSS\u3067\u3059');
+			return;
+		}
+		else if (this.rssDoc.documentElement.localName == 'parsererror') {
+			alert(this.rss+'\n\n'+this.rssDoc.documentElement.textContent);
+			return;
+		}
 	},
 
 	updateRSS : function()
