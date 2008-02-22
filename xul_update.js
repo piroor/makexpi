@@ -93,6 +93,8 @@ HTMLToRSSConverter.prototype = {
 	{
 		UCONV.charset = defaultHTMLEncoding;
 		var source = UCONV.ConvertToUnicode(this.readFrom(this.html));
+		if (source.indexOf('<!DOCTYPE') != 0)
+			source = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">\n'+source;
 		var parser = new DOMParser();
 		this.htmlDoc = parser.parseFromString(source, 'text/xml');
 	},
