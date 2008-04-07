@@ -72,6 +72,11 @@ HTMLToRSSConverter.prototype = {
 		/(_([^\.]+)\.[\w\.]+\w)$/i.test(this.html);
 		this.fileName = RegExp.$1;
 		this.appName = RegExp.$2;
+		if (/(index|history)(\.[\w\.]+\w)$/.test(this.html)) {
+			/([^\/\\]+)[\/\\](index|history)(\.[\w\.]+\w)$/i.test(this.html);
+			this.appName = RegExp.$1;
+			this.fileName = this.appName+'/index'+RegExp.$3;
+		}
 
 		this.loadHash();
 		this.loadHTML();
@@ -106,6 +111,27 @@ HTMLToRSSConverter.prototype = {
 			alert(this.html+'\n\n'+this.htmlDoc.documentElement.textContent);
 			return;
 		}
+
+		this.historyDoc = null;
+		if (!/index(\.[\w\.]+\w)$/.test(this.html)) return;
+
+		var history = this.html.replace(/index(\.[\w\.]+\w)$/, 'history$1');
+
+		UCONV.charset = defaultHTMLEncoding;
+		var source = UCONV.ConvertToUnicode(this.readFrom(history));
+		if (source.indexOf('<!DOCTYPE') != 0)
+			source = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">\n'+source;
+		var parser = new DOMParser();
+		this.historyDoc = parser.parseFromString(source, 'text/xml');
+
+		if (!this.historyDoc.documentElement) {
+			alert(history+'\n\u4e0d\u6b63\u306aHTML\u3067\u3059');
+			return;
+		}
+		else if (this.historyDoc.documentElement.localName == 'parsererror') {
+			alert(history+'\n\n'+this.historyDoc.documentElement.textContent);
+			return;
+		}
 	},
 
 	getUpdateInfo : function()
@@ -118,13 +144,13 @@ HTMLToRSSConverter.prototype = {
 
 		this.version = this.evaluateXPath(
 				'//*[@id="history"]/descendant::html:dt[1]',
-				this.htmlDoc,
+				(this.historyDoc || this.htmlDoc),
 				XPathResult.STRING_TYPE
 			).stringValue;
 
 		var nodes = this.evaluateXPath(
 				'//*[@id="history"]/descendant::html:dt[1]/following::html:ul[1]/html:li',
-				this.htmlDoc,
+				(this.historyDoc || this.htmlDoc),
 				XPathResult.ORDERED_NODE_SNAPSHOT_TYPE
 			);
 		var range = this.htmlDoc.createRange();
@@ -508,7 +534,12 @@ if (!htmlJa || !htmlEn) {
 
 /(_([^\.]+)\.[\w\.]+\w)$/i.test(htmlJa);
 var appName = RegExp.$2;
-
+if (/(index|history)(\.[\w\.]+\w)$/.test(htmlJa)) {
+	/([^\/\\]+)[\/\\](index|history)\.[\w\.]+\w$/i.test(htmlJa);
+	appName = RegExp.$1;
+	htmlJa = htmlJa.replace(/history(\.[\w\.]+\w)$/, 'index$1');
+	htmlEn = htmlEn.replace(/history(\.[\w\.]+\w)$/, 'index$1');
+}
 
 // select RSS
 
@@ -519,7 +550,7 @@ var tempLocalFile = Components
 var rssJa = defaultRSSDir + rssJaFile;
 tempLocalFile.initWithPath(rssJa);
 if (!tempLocalFile.exists()) {
-	rssJa = htmlJa.replace(/[^\/\\]+$/, rssJaFile);
+	rssJa = htmlJa.replace(/[^\/\\]+([\/\\]index[^\/]+)?$/, rssJaFile);
 	tempLocalFile.initWithPath(rssJa);
 	if (!tempLocalFile.exists()) {
 		filePicker.init(
