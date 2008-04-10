@@ -2,16 +2,28 @@
 
 
 appname=$1
-if [$appname = '']
+if [ "$appname" = '' ]
 	# スクリプト名でパッケージ名を明示している場合：
 	# スクリプトがパッケージ用のファイル群と一緒に置かれている事を前提に動作
-	cd ${0%/*}
+#	cd "${0%/*}"
 then
 	# 引数でパッケージ名を明示している場合：
 	# スクリプトがパッケージ用のファイル群のあるディレクトリで実行されていることを前提に動作
-	appname=${0##*/}
-	appname=${appname%.sh}
-	appname=${appname%_test}
+	appname="${0##*/}"
+	appname="${appname%.sh}"
+	appname="${appname%_test}"
+fi
+
+
+version=`grep 'em:version=' install.rdf | sed -r -e 's#em:version=##g' | sed -r -e 's#[ \t\r\n"]##g'`
+if [ "$version" = '' ]
+then
+	version=`grep '<em:version>' install.rdf | sed -r -e 's#</?em:version>##g' | sed -r -e 's#[ \t\r\n"]##g'`
+fi
+if [ "$version" != '' ]
+then
+	use_version=`echo "$2" | sed -r -e 's#version=(1|yes|true)#1#ig'`
+	if [ "$use_version" = '1' ]; then version_part="-$version"; fi;
 fi
 
 
@@ -24,6 +36,11 @@ rm -f ${appname}_en.xpi
 rm -f ${appname}_noupdate.xpi
 rm -f ${appname}_noupdate_en.xpi
 rm -f $appname.lzh
+rm -f $appname-*.xpi
+rm -f ${appname}-*_en.xpi
+rm -f ${appname}-*_noupdate.xpi
+rm -f ${appname}-*_noupdate_en.xpi
+rm -f $appname-*.lzh
 
 
 # create temp files
@@ -86,19 +103,19 @@ fi
 
 
 #create xpi (Japanese)
-zip -r -9 ../$appname.xpi $xpi_contents -x \*/.svn/\* || exit 1
+zip -r -9 ../$appname${version_part}.xpi $xpi_contents -x \*/.svn/\* || exit 1
 
 #create xpi without update info (Japanese)
 rm -f install.rdf
 sed -e "s#^.*<em:*\(updateURL\|updateKey\)>.*</em:*\(updateURL\|updateKey\)>##g" -e "s#^.*em:*\(updateURL\|updateKey\)=\(\".*\"\|'.*'\)##g" ../install.rdf > install.rdf
-zip -r -9 ../${appname}_noupdate.xpi $xpi_contents -x \*/.svn/\* || exit 1
+zip -r -9 ../${appname}${version_part}_noupdate.xpi $xpi_contents -x \*/.svn/\* || exit 1
 
 
 
 # create lzh
 if [ -f ../readme.txt ]
 then
-	lha a ../$appname.lzh ../$appname.xpi ../readme.txt
+	lha a ../$appname${version_part}.lzh ../$appname.xpi ../readme.txt
 fi
 
 
@@ -112,11 +129,11 @@ then
 	cp ../en.inf ./locale.inf
 	cp ../options.$appname.en.inf ./options.inf
 	chmod 644 *.inf
-	zip -r -9 ../${appname}_en.xpi $xpi_contents -x \*/.svn/\* || exit 1
+	zip -r -9 ../${appname}${version_part}_en.xpi $xpi_contents -x \*/.svn/\* || exit 1
 
 	rm -f install.rdf
 	sed -e "s#^.*<em:*\(updateURL\|updateKey\)>.*</em:*\(updateURL\|updateKey\)>##g" -e "s#^.*em:*\(updateURL\|updateKey\)=\(\".*\"\|'.*'\)##g" ../install.rdf > install.rdf
-	zip -r -9 ../${appname}_noupdate_en.xpi $xpi_contents -x \*/.svn/\* || exit 1
+	zip -r -9 ../${appname}${version_part}_noupdate_en.xpi $xpi_contents -x \*/.svn/\* || exit 1
 fi
 
 
@@ -125,7 +142,7 @@ fi
 if [ -d ../meta ]
 then
 	rm -f ../meta/$appname.xpi
-	cp ../$appname.xpi ../meta/$appname.xpi
+	cp ../$appname${version_part}.xpi ../meta/$appname.xpi
 fi
 
 # end
