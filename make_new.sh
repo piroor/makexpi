@@ -46,16 +46,9 @@ rm -f $appname-*.lzh
 # create temp files
 mkdir -p xpi_temp
 
-cp -r chrome ./xpi_temp/
-cp -r components ./xpi_temp/
-cp -r defaults ./xpi_temp/
-cp -r license ./xpi_temp/
-cp -r platform ./xpi_temp/
-cp -r *.rdf ./xpi_temp/
-cp -r *.manifest ./xpi_temp/
-cp -r *.js ./xpi_temp/
-cp -r *.light ./xpi_temp/
-cp -r *.cfg ./xpi_temp/
+for f in ${xpi_contents}; do
+	cp -rp ${f} xpi_temp
+done
 
 cp -r content ./xpi_temp/
 cp -r locale ./xpi_temp/
