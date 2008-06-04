@@ -65,10 +65,10 @@ IF EXIST platform (
 )
 
 cd xpi_temp
-mkdir chrome
-
-cd ..
-copy "%appname%.jar" xpi_temp\chrome\ /y
+IF EXIST "..\%appname%.jar" (
+	mkdir chrome
+	copy "..\%appname%.jar" xpi_temp\chrome\ /y
+)
 cd xpi_temp
 
 chmod -cfr 644 *.jar *.js *.light *.inf *.rdf *.cfg *.manifest

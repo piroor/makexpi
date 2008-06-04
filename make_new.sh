@@ -85,6 +85,10 @@ chmod -R 644 *.jar *.js *.light *.inf *.rdf *.cfg *.manifest
 # create jar
 mkdir -p chrome
 zip -r -0 ./chrome/$appname.jar content locale skin -x \*/.svn/\*
+if [ ! -f ./chrome/$appname.jar ]
+then
+	rm -r -f chrome
+fi
 
 
 if [ -f ./install.js ]
