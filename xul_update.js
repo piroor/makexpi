@@ -28,6 +28,41 @@ var updateRes = 'update.rdf';
 
 var updateInfoPostPassword = '';
 var updateInfoPostURI = 'http://piro.sakura.ne.jp/wiki/wiki.cgi/extensions/%appname%/%lang%/%version%.wikieditish';
+var getNameFunc = function(aService, aDocument) { // must return a string
+		return aService.evaluateXPath(
+				'//html:h1',
+				aDocument,
+				XPathResult.STRING_TYPE
+			).stringValue.replace(/\s+/g, ' ');
+	};
+var getVersionFunc = function(aService, aDocument) { // must return a string
+		return aService.evaluateXPath(
+				'//*[@id="history"]/descendant::html:dt[1]',
+				aDocument,
+				XPathResult.STRING_TYPE
+			).stringValue;
+	};
+var getUpdatesFunc = function(aService, aDocument) { // must return object which has two arrays
+		var nodes = aService.evaluateXPath(
+				'//*[@id="history"]/descendant::html:dt[1]/following::html:ul[1]/html:li',
+				aDocument,
+				XPathResult.ORDERED_NODE_SNAPSHOT_TYPE
+			);
+		var range = aDocument.createRange();
+		var result = {
+				nodes : [],
+				strings : []
+			};
+		for (var i = 0, maxi = nodes.snapshotLength; i < maxi; i++)
+		{
+			range.selectNodeContents(nodes.snapshotItem(i));
+			result.nodes.push(range.cloneContents(true));
+			result.strings.push(range.toString());
+		}
+		range.detach();
+		return result;
+	};
+
 
 // =============================================================================
 
@@ -78,13 +113,21 @@ HTMLToRSSConverter.prototype = {
 			this.fileName = this.appName+'/index'+RegExp.$3;
 		}
 
-		this.loadHash();
-		this.loadHTML();
-		this.getUpdateInfo();
+		if (
+			!this.loadHash() ||
+			!this.loadHTML() ||
+			!this.getUpdateInfo()
+			)
+			return;
+
 		if (this.rss) {
-			this.loadRSS();
-			this.updateRSS();
-			if (!DEBUG) this.saveRSS();
+			if (
+				!this.loadRSS() ||
+				!this.updateRSS() ||
+				(!DEBUG && !this.saveRSS())
+				) {
+				// do nothing
+			}
 		}
 		if (!DEBUG) this.postUpdateInfo();
 	},
@@ -92,12 +135,16 @@ HTMLToRSSConverter.prototype = {
 	loadHash : function()
 	{
 		this.hash = this.readFrom(this.hash);
+		return this.hash ? true : false ;
 	},
 
 	loadHTML : function()
 	{
 		UCONV.charset = defaultHTMLEncoding;
-		var source = UCONV.ConvertToUnicode(this.readFrom(this.html));
+		var source = this.readFrom(this.html);
+		if (!source) return false;
+
+		source = UCONV.ConvertToUnicode(source);
 		if (source.indexOf('<!DOCTYPE') != 0)
 			source = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">\n'+source;
 		var parser = new DOMParser();
@@ -105,20 +152,23 @@ HTMLToRSSConverter.prototype = {
 
 		if (!this.htmlDoc.documentElement) {
 			alert(this.html+'\n\u4e0d\u6b63\u306aHTML\u3067\u3059');
-			return;
+			return false;
 		}
 		else if (this.htmlDoc.documentElement.localName == 'parsererror') {
 			alert(this.html+'\n\n'+this.htmlDoc.documentElement.textContent);
-			return;
+			return false;
 		}
 
 		this.historyDoc = null;
-		if (!/index(\.[\w\.]+\w)$/.test(this.html)) return;
+		if (!/index(\.[\w\.]+\w)$/.test(this.html)) return true;
 
 		var history = this.html.replace(/index(\.[\w\.]+\w)$/, 'history$1');
 
 		UCONV.charset = defaultHTMLEncoding;
-		var source = UCONV.ConvertToUnicode(this.readFrom(history));
+		var source = this.readFrom(history);
+		if (!source) return false;
+
+		source = UCONV.ConvertToUnicode(source);
 		if (source.indexOf('<!DOCTYPE') != 0)
 			source = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">\n'+source;
 		var parser = new DOMParser();
@@ -126,48 +176,34 @@ HTMLToRSSConverter.prototype = {
 
 		if (!this.historyDoc.documentElement) {
 			alert(history+'\n\u4e0d\u6b63\u306aHTML\u3067\u3059');
-			return;
+			return false;
 		}
 		else if (this.historyDoc.documentElement.localName == 'parsererror') {
 			alert(history+'\n\n'+this.historyDoc.documentElement.textContent);
-			return;
+			return false;
 		}
+		return true;
 	},
 
 	getUpdateInfo : function()
 	{
-		this.title = this.evaluateXPath(
-				'//html:h1',
-				this.htmlDoc,
-				XPathResult.STRING_TYPE
-			).stringValue.replace(/\s+/g, ' ');
+		if (!this.htmlDoc && !this.historyDoc) return false;
 
-		this.version = this.evaluateXPath(
-				'//*[@id="history"]/descendant::html:dt[1]',
-				(this.historyDoc || this.htmlDoc),
-				XPathResult.STRING_TYPE
-			).stringValue;
+		this.title = getNameFunc(this, this.htmlDoc);
+		this.version = getVersionFunc(this, this.historyDoc || this.htmlDoc);
 
-		var nodes = this.evaluateXPath(
-				'//*[@id="history"]/descendant::html:dt[1]/following::html:ul[1]/html:li',
-				(this.historyDoc || this.htmlDoc),
-				XPathResult.ORDERED_NODE_SNAPSHOT_TYPE
-			);
-		var range = this.htmlDoc.createRange();
-		this.updates = [];
-		this.updatesString = [];
-		for (var i = 0, maxi = nodes.snapshotLength; i < maxi; i++)
-		{
-			range.selectNodeContents(nodes.snapshotItem(i));
-			this.updates.push(range.cloneContents(true));
-			this.updatesString.push(range.toString());
-		}
-		range.detach();
+		var result = getUpdatesFunc(this, this.historyDoc || this.htmlDoc);
+		this.updates = result.nodes;
+		this.updatesString = result.strings;
+
+		return true;
 	},
 
 	loadRSS : function()
 	{
 		var source = this.readFrom(this.rss);
+		if (!source) return false;
+
 		var found = /^<\?xml\s.*encoding=['"]([^'"]+)['"]/.test(source);
 		var encoding = found ? RegExp.$1 : 'UTF-8';
 		UCONV.charset = encoding;
@@ -177,33 +213,40 @@ HTMLToRSSConverter.prototype = {
 
 		if (!this.rssDoc.documentElement) {
 			alert(this.rss+'\n\u4e0d\u6b63\u306aRSS\u3067\u3059');
-			return;
+			return false;
 		}
 		else if (this.rssDoc.documentElement.localName == 'parsererror') {
 			alert(this.rss+'\n\n'+this.rssDoc.documentElement.textContent);
-			return;
+			return false;
 		}
+		return true;
 	},
 
 	updateRSS : function()
 	{
-		this.updateDate();
-		this.updateItem();
-		this.updateList();
+		return (
+			this.rssDoc &&
+			this.updateDate() &&
+			this.updateItem() &&
+			this.updateList()
+			);
 	},
 
 	updateDate : function()
 	{
+		if (!this.rssDoc) return false;
 		var dateNode = this.evaluateXPath(
 				'//dc:date',
 				this.rssDoc,
 				XPathResult.FIRST_ORDERED_NODE_TYPE
 			).singleNodeValue;
 		dateNode.textContent = this.date;
+		return true;
 	},
 
 	updateItem : function()
 	{
+		if (!this.rssDoc) return false;
 		var item = this.evaluateXPath(
 				'//rss:item[contains(attribute::rdf:about, "'+this.fileName+'")]',
 				this.rssDoc,
@@ -261,10 +304,13 @@ HTMLToRSSConverter.prototype = {
 				).singleNodeValue;
 			hash.textContent = 'sha1:'+RegExp.$1;
 		}
+
+		return true;
 	},
 
 	updateList : function()
 	{
+		if (!this.rssDoc) return false;
 		var item = this.evaluateXPath(
 				'//rss:item[contains(attribute::rdf:about, "'+this.fileName+'")]',
 				this.rssDoc,
@@ -300,6 +346,8 @@ HTMLToRSSConverter.prototype = {
 		container.insertBefore(li, container.firstChild);
 
 		range.detach();
+
+		return true;
 	},
 
 	saveRSS : function()
@@ -324,6 +372,7 @@ HTMLToRSSConverter.prototype = {
 					.createInstance(Components.interfaces.nsILocalFile);
 			file.initWithPath(url);
 		}
+		if (!file.exists()) return false;
 
 		this.saveRSSAs(file);
 
@@ -332,6 +381,7 @@ HTMLToRSSConverter.prototype = {
 			another.append(this.another);
 			this.saveRSSAs(another);
 		}
+		return true;
 	},
 
 	saveRSSAs : function(aFile)
@@ -355,7 +405,7 @@ HTMLToRSSConverter.prototype = {
 
 	postUpdateInfo : function()
 	{
-		if (!updateInfoPostPassword) return;
+		if (!updateInfoPostURI || !updateInfoPostPassword) return;
 
 		var uri = updateInfoPostURI
 					.replace(/%appname%/gi, this.appName)
@@ -600,5 +650,5 @@ if (rssJa && rssEn) {
 
 if (!updateInfoPostPassword) updateInfoPostPassword = prompt('\u6295\u7a3f\u7528\u30d1\u30b9\u30ef\u30fc\u30c9\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044');
 
-new HTMLToRSSConverter(htmlJa, rssJa, 'ja', hashPath);
+new HTMLToRSSConverter(htmlJa, rssJa, 'ja', hashPath, updateRes);
 new HTMLToRSSConverter(htmlEn, rssEn, 'en-US', hashPath, updateRes);
