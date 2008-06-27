@@ -40,7 +40,7 @@ var getVersionFunc = function(aService, aDocument) { // must return a string
 				'//*[@id="history"]/descendant::html:dt[1]',
 				aDocument,
 				XPathResult.STRING_TYPE
-			).stringValue;
+			).stringValue.replace(/^\s*|(\s*\([^\)]*\))\s*$/g, '');
 	};
 var getUpdatesFunc = function(aService, aDocument) { // must return object which has two arrays
 		var nodes = aService.evaluateXPath(
