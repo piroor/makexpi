@@ -27,7 +27,7 @@ then
 fi
 
 
-xpi_contents="chrome components defaults license platform *.js *.rdf *.manifest *.inf *.cfg *.light"
+xpi_contents="chrome components isp defaults license platform *.js *.rdf *.manifest *.inf *.cfg *.light"
 
 
 rm -r -f xpi_temp
