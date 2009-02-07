@@ -104,7 +104,7 @@ HTMLToRSSConverter.prototype = {
 				'+09:00'
 			].join('');
 
-		/(_([^\.]+)\.[\w\.]+\w)$/i.test(this.html);
+		/(_([^\.\/\\]+)\.[\w\.]+\w)$/i.test(this.html);
 		this.fileName = RegExp.$1;
 		this.appName = RegExp.$2;
 		if (/(index|history)(\.[\w\.]+\w)$/.test(this.html)) {
@@ -582,7 +582,7 @@ if (!htmlJa || !htmlEn) {
 	}
 }
 
-/(_([^\.\/\\]+)\.[\w\.\/\\]+\w)$/i.test(htmlJa);
+/(_([^\.\/\\]+)\.[\w\.]+\w)$/i.test(htmlJa);
 var appName = RegExp.$2;
 if (/(index|history)(\.[\w\.]+\w)$/.test(htmlJa)) {
 	/([^\/\\]+)[\/\\](index|history)\.[\w\.]+\w$/i.test(htmlJa);
