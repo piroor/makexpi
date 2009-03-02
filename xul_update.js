@@ -9,10 +9,10 @@
 // _APPNAME.html または _APPNAME.html.en でこのマクロを実行すると、
 // xul.xml と xul.xml.en が更新される。
 
-var defaultHTMLDir = 'O:\\xul\\';
-var defaultRSSDir  = 'O:\\xul\\';
-var defaultXPIDir  = 'D:\\data\\codes\\%appname%\\';
-var defaultHashDir = 'D:\\data\\codes\\%appname%\\';
+var defaultHTMLDir = 'C:\\Users\\Public\\website\\or\\xul\\';
+var defaultRSSDir  = 'C:\\Users\\Public\\website\\or\\xul\\';
+var defaultXPIDir  = 'C:\\Users\\Public\\data\\codes\\%appname%\\';
+var defaultHashDir = 'C:\\Users\\Public\\data\\codes\\%appname%\\';
 
 var defaultHTMLEncoding = 'Shift_JIS';
 
