@@ -95,11 +95,6 @@ zip -9 -r "..\%appname%_noupdate.xpi" chrome defaults components isp license pla
 
 
 
-:MAKELZH
-IF EXIST ..\readme.txt (
-	unlha.exe a -m0 ..\%appname%.lzh ..\%appname%.xpi ..\readme.txt
-)
-
 :MAKEENOLD
 IF EXIST ..\install.js (
 	copy ..\install.rdf .\install.rdf

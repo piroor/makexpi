@@ -1,8 +1,8 @@
 setlocal
 set appname=%~n0
 
-d:
-cd d:\data\codes\%appname%
+c:
+cd c:\Users\Public\data\codes\%appname%
 
 rmdir "jar_temp" /s /q
 rmdir "xpi_temp" /s /q
@@ -83,11 +83,6 @@ zip -9 "..\%appname%_noupdate.xpi" *.js *.light *.inf *.rdf *.cfg *.manifest
 zip -9 -r "..\%appname%_noupdate.xpi" chrome defaults components license platform
 
 
-
-:MAKELZH
-IF EXIST ..\readme.txt (
-	unlha.exe a -m0 ..\%appname%.lzh ..\%appname%.xpi ..\readme.txt
-)
 
 :MAKEENOLD
 IF EXIST ..\install.js (

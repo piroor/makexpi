@@ -3,8 +3,8 @@ set appname=%~n0
 set appname=%appname:~0,-5%
 
 
-d:
-cd d:\data\codes\%appname%
+c:
+cd c:\Users\Public\data\codes\%appname%
 
 
 rmdir "jar_temp" /s /q
