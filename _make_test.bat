@@ -34,6 +34,7 @@ cd ..
 mkdir xpi_temp
 xcopy defaults xpi_temp\defaults /i /s
 xcopy components xpi_temp\components /i /s
+xcopy modules xpi_temp\modules /i /s
 xcopy license xpi_temp\license /i /s
 xcopy chrome xpi_temp\chrome /i /s
 xcopy platform xpi_temp\platform /i /s
