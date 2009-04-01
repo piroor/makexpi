@@ -88,11 +88,11 @@ rem signtool -d "%certpath%" -k "%certname%" -p "%certpass%" -X -Z "%appname%.xp
 rem cd xpi_temp
 
 zip -9 "..\%appname%.xpi" *.js *.light *.inf *.rdf *.cfg *.manifest
-zip -9 -r "..\%appname%.xpi" chrome defaults components isp license platform
+zip -9 -r "..\%appname%.xpi" chrome defaults components modules isp license platform
 
 sed -e "s#^.*<em:*\(updateURL\|updateKey\)>.*</em:*\(updateURL\|updateKey\)>##g" -e "s#^.*em:*\(updateURL\|updateKey\)=\(\".*\"\|'.*'\)##g" ..\install.rdf > install.rdf
 zip -9 "..\%appname%_noupdate.xpi" *.js *.light *.inf *.rdf *.cfg *.manifest
-zip -9 -r "..\%appname%_noupdate.xpi" chrome defaults components isp license platform
+zip -9 -r "..\%appname%_noupdate.xpi" chrome defaults components modules isp license platform
 
 
 
@@ -107,11 +107,11 @@ IF EXIST ..\install.js (
 	rem cd xpi_temp
 
 	zip -9 "..\%appname%_en.xpi" *.js *.light *.inf *.rdf *.cfg *.manifest
-	zip -9 -r "..\%appname%_en.xpi" chrome defaults components isp license platform
+	zip -9 -r "..\%appname%_en.xpi" chrome defaults components modules isp license platform
 
 	sed -e "s#^.*<em:*\(updateURL\|updateKey\)>.*</em:*\(updateURL\|updateKey\)>##g" -e "s#^.*em:*\(updateURL\|updateKey\)=\(\".*\"\|'.*'\)##g" ..\install.rdf > install.rdf
 	zip -9 "..\%appname%_noupdate_en.xpi" *.js *.light *.inf *.rdf *.cfg *.manifest
-	zip -9 -r "..\%appname%_noupdate_en.xpi" chrome defaults components isp license platform
+	zip -9 -r "..\%appname%_noupdate_en.xpi" chrome defaults components modules isp license platform
 )
 
 

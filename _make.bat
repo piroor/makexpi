@@ -77,11 +77,11 @@ IF EXIST ..\install.js (
 	chmod -cf 644 *.inf
 )
 zip -9 "..\%appname%.xpi" *.js *.light *.inf *.rdf *.cfg *.manifest
-zip -9 -r "..\%appname%.xpi" chrome defaults components license platform
+zip -9 -r "..\%appname%.xpi" chrome defaults components modules license platform
 
 sed -e "s#^.*<em:*\(updateURL\|updateKey\)>.*</em:*\(updateURL\|updateKey\)>##g" -e "s#^.*em:*\(updateURL\|updateKey\)=\(\".*\"\|'.*'\)##g" ..\install.rdf > install.rdf
 zip -9 "..\%appname%_noupdate.xpi" *.js *.light *.inf *.rdf *.cfg *.manifest
-zip -9 -r "..\%appname%_noupdate.xpi" chrome defaults components license platform
+zip -9 -r "..\%appname%_noupdate.xpi" chrome defaults components modules license platform
 
 
 
@@ -92,11 +92,11 @@ IF EXIST ..\install.js (
 	copy "..\options.%appname%.en.inf" .\options.inf
 	chmod -cf 644 *.inf
 	zip -9 "..\%appname%_en.xpi" *.js *.light *.inf *.rdf *.cfg *.manifest
-	zip -9 -r "..\%appname%_en.xpi" chrome defaults components license platform
+	zip -9 -r "..\%appname%_en.xpi" chrome defaults components modules license platform
 
 	sed -e "s#^.*<em:*\(updateURL\|updateKey\)>.*</em:*\(updateURL\|updateKey\)>##g" -e "s#^.*em:*\(updateURL\|updateKey\)=\(\".*\"\|'.*'\)##g" ..\install.rdf > install.rdf
 	zip -9 "..\%appname%_noupdate_en.xpi" *.js *.light *.inf *.rdf *.cfg *.manifest
-	zip -9 -r "..\%appname%_noupdate_en.xpi" chrome defaults components license platform
+	zip -9 -r "..\%appname%_noupdate_en.xpi" chrome defaults components modules license platform
 )
 
 

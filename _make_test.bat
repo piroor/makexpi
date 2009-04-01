@@ -78,7 +78,7 @@ IF EXIST ..\install.js (
 )
 
 zip -9 "..\%appname%_test.xpi" *.js *.light *.inf *.rdf *.cfg *.manifest
-zip -9 -r "..\%appname%_test.xpi" chrome defaults components license platform
+zip -9 -r "..\%appname%_test.xpi" chrome defaults components modules license platform
 
 
 
