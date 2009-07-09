@@ -1,4 +1,8 @@
 // localeの未訳エントリを探す
+// 使い方：
+//  1. このスクリプトを実行する
+//  2. en-USとそれ以外のロケールを含んでいるlocaleフォルダまたはその上位のフォルダを選択する
+//  3. en-USにあってそれ以外のロケールで未定義となっているエンティティが列挙される
 
 var separator1 = '--------------------';
 var separator2 = '========================================';
@@ -114,11 +118,13 @@ if (filePicker.show() == filePicker.returnCancel) return;
 
 var base = filePicker.file;
 var results = [];
-getItemsIn(base, function(aFolder) {
-	if (aFolder.leafName != 'locale') return;
-	let result = inspectLocale(aFolder);
-	if (result) results.push([aFolder, result]);
-});
+var taskForLocale = function(aFolder) {
+		if (aFolder.leafName != 'locale') return;
+		let result = inspectLocale(aFolder);
+		if (result) results.push([aFolder, result]);
+	};
+taskForLocale(base);
+getItemsIn(base, taskForLocale);
 
 var report = (results.length) ?
 		results
