@@ -57,6 +57,17 @@ var getUpdatesFunc = function(aService, aDocument) { // must return object which
 		{
 			range.selectNodeContents(nodes.snapshotItem(i));
 			result.nodes.push(range.cloneContents(true));
+			let children = result.nodes[result.nodes.length-1].childNodes;
+			for (let i = children.length-1; i > -1; i--)
+			{
+				let child = children[i];
+				if (child.nodeType != Node.ELEMENT_NODE ||
+					child.localName.toLowerCase() != 'a' ||
+					!child.hasAttribute('href'))
+					continue;
+				child.textContent += ' ( '+child.getAttribute('href')+' ) ';
+			}
+			range.selectNodeContents(result.nodes[result.nodes.length-1]);
 			result.strings.push(range.toString());
 		}
 		range.detach();
