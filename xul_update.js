@@ -314,6 +314,13 @@ HTMLToRSSConverter.prototype = {
 					XPathResult.FIRST_ORDERED_NODE_TYPE
 				).singleNodeValue;
 			hash.textContent = 'sha1:'+RegExp.$1;
+			var link = this.evaluateXPath(
+					'em:updateLink',
+					nodes.snapshotItem(i),
+					XPathResult.FIRST_ORDERED_NODE_TYPE
+				).singleNodeValue;
+			link.textContent = link.textContent
+								.replace(/\?update(\&version=.*)?$/, '') + '?update&version=' + this.version;
 		}
 
 		return true;
