@@ -1,4 +1,50 @@
 #!/bin/sh
+#
+# Usage: make_new.sh <addonname> version=<flag>
+#        ex.
+#         $ ./make_new.sh myaddon version=1
+#         $ ./make_new.sh myaddon
+#
+# This script creates two XPI files, <addonname>.xpi and <addonname>_noupdate.xpi.
+# If "updateURL" is specified in the install.rdf, it will be removed automatically
+# for <addonname>_noupdate.xpi. So, "_noupdate" file can be uplodad to Mozilla Add-ons.
+#
+# You have to put files in following pattern:
+#
+#  +[<addonname>]
+#    + make_new.sh           : this script
+#    + install.rdf
+#    + chrome.manifest
+#    + [chrome]              : jar, etc.
+#    + [content]             : XUL, JavaScript
+#    + [locale]              : DTD, properties
+#    + [skin]                : CSS, images
+#    + [defaults]
+#    |  + [preferences]
+#    |     + <addonname>.js  : default preferences
+#    + [components]          : XPCOM components, XPT
+#    + [modules]             : JavaScript code modules
+#    + [license]             : license documents
+#    + [isp]                 : ISP definitions for Thunderbird
+#    + [platform]
+#       + [WINNT]            : Microsoft Windows specific files
+#       |  + chrome.manifest
+#       |  + [chrome]
+#       |  + [content]
+#       |  + [locale]
+#       |  + [skin]
+#       + [Darwin]           : Mac OS X specific files
+#       |  + chrome.manifest
+#       |  + [chrome]
+#       |  + [content]
+#       |  + [locale]
+#       |  + [skin]
+#       + [Linux]            : Linux specific files
+#          + chrome.manifest
+#          + [chrome]
+#          + [content]
+#          + [locale]
+#          + [skin]
 
 
 appname=$1
