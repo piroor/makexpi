@@ -1,13 +1,15 @@
-// XULアプリの更新状況をRSS化 
-
+// *****************************************************************
+// * XULアプリの更新状況をRSS化
+// *****************************************************************
+//
 // 必要な物：
 //    _APPNAME.html    : 日本語版の配布ページのHTML
 //    _APPNAME.html.en : 英語版の配布ページのHTML
 //    xul.xml          : 日本語版の更新情報RSS
 //    xul.xml.en       : 英語版の更新情報RSS
 //
-// _APPNAME.html または _APPNAME.html.en でこのマクロを実行すると、
-// xul.xml と xul.xml.en が更新される。
+// _APPNAME.html または _APPNAME.html.en を開いた状態でこのスクリプトを実行すると、
+// xul.xml と xul.xml.en が更新され、xul.xml.en が update.rdf として複製される。
 
 var defaultHTMLDir = 'C:\\Users\\Public\\website\\or\\xul\\';
 var defaultRSSDir  = 'C:\\Users\\Public\\website\\or\\xul\\';
