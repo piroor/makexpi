@@ -44,6 +44,8 @@ for f in ${xpi_contents}; do
 	cp -rp ${f} xpi_temp
 done
 
+rm xpi_temp/components/*.idl
+
 cp -r content ./xpi_temp/
 cp -r locale ./xpi_temp/
 cp -r skin ./xpi_temp/
@@ -54,6 +56,8 @@ if [ -d ./platform ]
 then
 	cp -r platform ./xpi_temp/
 	cd xpi_temp/platform
+
+	rm components/*.idl
 
 	for dirname in *
 	do
