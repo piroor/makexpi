@@ -1,9 +1,9 @@
 #!/bin/sh
 #
-# Usage: make_new.sh -n <addonname> -v <flag> -s <suffix>
+# Usage: make_new.sh <addonname> version=<flag>
 #        ex.
-#         $ ./make_new.sh -n myaddon -v 1
-#         $ ./make_new.sh -n myaddon
+#         $ ./make_new.sh myaddon version=1
+#         $ ./make_new.sh myaddon
 #
 # This script creates two XPI files, <addonname>.xpi and <addonname>_noupdate.xpi.
 # If "updateURL" is specified in the install.rdf, it will be removed automatically
@@ -47,42 +47,17 @@
 #          + [skin]
 
 
-while getopts n:v:s: OPT
-do
-  case $OPT in
-    "n" ) appname="$OPTARG";;
-    "v" ) use_version="$OPTARG"; use_version=`echo "$use_version" | sed -r -e 's#version=(1|yes|true)#1#ig'`;;
-    "s" ) suffix="$OPTARG" ;;
-  esac
-done
-
-if [ "$suffix" != '' ]
+appname=$1
+if [ "$appname" = '' ]
+	# スクリプト名でパッケージ名を明示している場合：
+	# スクリプトがパッケージ用のファイル群と一緒に置かれている事を前提に動作
+#	cd "${0%/*}"
 then
-	suffix=-$suffix
-fi
-
-
-# for backward compatibility
-
-if [ "$suffix" = '' ]
-then
-	appname=$1
-	if [ "$appname" = '' ]
-		# スクリプト名でパッケージ名を明示している場合：
-		# スクリプトがパッケージ用のファイル群と一緒に置かれている事を前提に動作
-	#	cd "${0%/*}"
-	then
-		# 引数でパッケージ名を明示している場合：
-		# スクリプトがパッケージ用のファイル群のあるディレクトリで実行されていることを前提に動作
-		appname="${0##*/}"
-		appname="${appname%.sh}"
-		appname="${appname%_test}"
-	fi
-fi
-
-if [ "$use_version" = '' ]
-then
-	use_version=`echo "$2" | sed -r -e 's#version=(1|yes|true)#1#ig'`
+	# 引数でパッケージ名を明示している場合：
+	# スクリプトがパッケージ用のファイル群のあるディレクトリで実行されていることを前提に動作
+	appname="${0##*/}"
+	appname="${appname%.sh}"
+	appname="${appname%_test}"
 fi
 
 
@@ -93,6 +68,7 @@ then
 fi
 if [ "$version" != '' ]
 then
+	use_version=`echo "$2" | sed -r -e 's#version=(1|yes|true)#1#ig'`
 	if [ "$use_version" = '1' ]; then version_part="-$version"; fi;
 fi
 
@@ -101,16 +77,16 @@ xpi_contents="chrome components modules isp defaults license platform *.js *.rdf
 
 
 rm -r -f xpi_temp
-rm -f ${appname}${suffix}.xpi
-rm -f ${appname}${suffix}_en.xpi
-rm -f ${appname}${suffix}_noupdate.xpi
-rm -f ${appname}${suffix}_noupdate_en.xpi
-rm -f ${appname}${suffix}.lzh
-rm -f ${appname}${suffix}-*.xpi
-rm -f ${appname}${suffix}-*_en.xpi
-rm -f ${appname}${suffix}-*_noupdate.xpi
-rm -f ${appname}${suffix}-*_noupdate_en.xpi
-rm -f ${appname}${suffix}-*.lzh
+rm -f $appname.xpi
+rm -f ${appname}_en.xpi
+rm -f ${appname}_noupdate.xpi
+rm -f ${appname}_noupdate_en.xpi
+rm -f $appname.lzh
+rm -f $appname-*.xpi
+rm -f ${appname}-*_en.xpi
+rm -f ${appname}-*_noupdate.xpi
+rm -f ${appname}-*_noupdate_en.xpi
+rm -f $appname-*.lzh
 
 
 # create temp files
@@ -174,19 +150,19 @@ fi
 
 
 #create xpi (Japanese)
-zip -r -9 ../$appname${version_part}${suffix}.xpi $xpi_contents -x \*/.svn/\* || exit 1
+zip -r -9 ../$appname${version_part}.xpi $xpi_contents -x \*/.svn/\* || exit 1
 
 #create xpi without update info (Japanese)
 rm -f install.rdf
 sed -e "s#^.*<em:*\(updateURL\|updateKey\)>.*</em:*\(updateURL\|updateKey\)>##g" -e "s#^.*em:*\(updateURL\|updateKey\)=\(\".*\"\|'.*'\)##g" ../install.rdf > install.rdf
-zip -r -9 ../${appname}${version_part}${suffix}_noupdate.xpi $xpi_contents -x \*/.svn/\* || exit 1
+zip -r -9 ../${appname}${version_part}_noupdate.xpi $xpi_contents -x \*/.svn/\* || exit 1
 
 
 
 # create lzh
 if [ -f ../readme.txt ]
 then
-	lha a ../$appname${version_part}.lzh ../${appname}${suffix}.xpi ../readme.txt
+	lha a ../$appname${version_part}.lzh ../$appname.xpi ../readme.txt
 fi
 
 
@@ -200,11 +176,11 @@ then
 	cp ../en.inf ./locale.inf
 	cp ../options.$appname.en.inf ./options.inf
 	chmod 644 *.inf
-	zip -r -9 ../${appname}${suffix}${version_part}_en.xpi $xpi_contents -x \*/.svn/\* || exit 1
+	zip -r -9 ../${appname}${version_part}_en.xpi $xpi_contents -x \*/.svn/\* || exit 1
 
 	rm -f install.rdf
 	sed -e "s#^.*<em:*\(updateURL\|updateKey\)>.*</em:*\(updateURL\|updateKey\)>##g" -e "s#^.*em:*\(updateURL\|updateKey\)=\(\".*\"\|'.*'\)##g" ../install.rdf > install.rdf
-	zip -r -9 ../${appname}${suffix}${version_part}_noupdate_en.xpi $xpi_contents -x \*/.svn/\* || exit 1
+	zip -r -9 ../${appname}${version_part}_noupdate_en.xpi $xpi_contents -x \*/.svn/\* || exit 1
 fi
 
 
@@ -212,8 +188,8 @@ fi
 #create meta package
 if [ -d ../meta ]
 then
-	rm -f ../meta/${appname}${suffix}.xpi
-	cp ../${appname}${suffix}${version_part}.xpi ../meta/${appname}${suffix}.xpi
+	rm -f ../meta/$appname.xpi
+	cp ../$appname${version_part}.xpi ../meta/$appname.xpi
 fi
 
 # end
