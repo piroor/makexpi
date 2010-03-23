@@ -1,9 +1,9 @@
 #!/bin/sh
 #
-# Usage: make_new.sh -n <addonname> -v <flag> -s <suffix>
+# Usage: makexpi.sh -n <addonname> -v <flag> -s <suffix>
 #        ex.
-#         $ ./make_new.sh -n myaddon -v 1
-#         $ ./make_new.sh -n myaddon
+#         $ ./makexpi.sh -n myaddon -v 1
+#         $ ./makexpi.sh -n myaddon
 #
 # This script creates two XPI files, <addonname>.xpi and <addonname>_noupdate.xpi.
 # If "updateURL" is specified in the install.rdf, it will be removed automatically
@@ -12,7 +12,7 @@
 # You have to put files in following pattern:
 #
 #  +[<addonname>]
-#    + make_new.sh           : this script
+#    + makexpi.sh           : this script
 #    + install.rdf
 #    + chrome.manifest
 #    + [chrome]              : jar, etc.
