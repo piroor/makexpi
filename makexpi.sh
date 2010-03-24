@@ -64,20 +64,20 @@ fi
 
 # for backward compatibility
 
-if [ "$suffix" = '' ]
+if [ "$appname" = '' ]
 then
 	appname=$1
-	if [ "$appname" = '' ]
-		# スクリプト名でパッケージ名を明示している場合：
-		# スクリプトがパッケージ用のファイル群と一緒に置かれている事を前提に動作
-	#	cd "${0%/*}"
-	then
-		# 引数でパッケージ名を明示している場合：
-		# スクリプトがパッケージ用のファイル群のあるディレクトリで実行されていることを前提に動作
-		appname="${0##*/}"
-		appname="${appname%.sh}"
-		appname="${appname%_test}"
-	fi
+fi
+if [ "$appname" = '' ]
+	# スクリプト名でパッケージ名を明示している場合：
+	# スクリプトがパッケージ用のファイル群と一緒に置かれている事を前提に動作
+#	cd "${0%/*}"
+then
+	# 引数でパッケージ名を明示している場合：
+	# スクリプトがパッケージ用のファイル群のあるディレクトリで実行されていることを前提に動作
+	appname="${0##*/}"
+	appname="${appname%.sh}"
+	appname="${appname%_test}"
 fi
 
 if [ "$use_version" = '' ]
