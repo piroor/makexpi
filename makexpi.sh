@@ -97,7 +97,8 @@ then
 fi
 
 
-xpi_contents="chrome components modules isp defaults license platform *.js *.rdf *.manifest *.inf *.cfg *.light"
+xpi_contents="chrome components/*.js components/*.xpt modules isp defaults license platform *.js *.rdf *.manifest *.inf *.cfg *.light"
+
 
 
 rm -r -f xpi_temp
@@ -117,10 +118,8 @@ rm -f ${appname}${suffix}-*.lzh
 mkdir -p xpi_temp
 
 for f in ${xpi_contents}; do
-	cp -rp ${f} xpi_temp
+	cp -rp --parents ${f} xpi_temp
 done
-
-rm xpi_temp/components/*.idl
 
 cp -r content ./xpi_temp/
 cp -r locale ./xpi_temp/
