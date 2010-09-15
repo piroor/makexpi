@@ -1,6 +1,5 @@
-#!/bin/sh
+set appname=%~n0
 
-cp buildscript/makexpi.sh ./
-./makexpi.sh noapplefile version=0
-rm ./makexpi.sh
-
+copy buildscript\makexpi.sh .\
+bash makexpi.sh %appname% version=0
+del makexpi.sh
