@@ -136,7 +136,7 @@ then
 
 	for dirname in *
 	do
-		if [ -f $dirname/chrome.manifest ]
+		if [ -d $dirname/content -o -d $dirname/skin -o -d $dirname/locale ]
 		then
 			cd $dirname
 			mkdir -p chrome
