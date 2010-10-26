@@ -14,6 +14,7 @@
 #  +[<addonname>]
 #    + make_new.sh           : this script
 #    + install.rdf
+#    + bootstrap.js
 #    + chrome.manifest
 #    + [chrome]              : jar, etc.
 #    + [content]             : XUL, JavaScript
