@@ -20,6 +20,7 @@ do
 		git pull
 		echo "submodule update: $dirname"
 		git submodule update --init ""
+		git submodule foreach 'git fetch;git checkout origin/master'
 		cd ..
 	fi
 
