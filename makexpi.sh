@@ -98,7 +98,7 @@ then
 fi
 
 
-xpi_contents="chrome components/*.js components/*.xpt modules isp defaults license platform *.js *.rdf *.manifest *.inf *.cfg *.light icon*.png"
+xpi_contents="chrome components/*.js components/*.xpt components/*/*.xpt modules isp defaults license platform *.js *.rdf *.manifest *.inf *.cfg *.light icon*.png"
 
 
 
