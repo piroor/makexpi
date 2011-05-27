@@ -1,11 +1,10 @@
 #!/bin/sh
 #
-# Usage: makexpi.sh -n <addonname> -v <flag> -s <suffix> -o <flag>
+# Usage: makexpi.sh -n <addonname> -v -s <suffix> -o
 #
-#          -v : 0=generate XPI file without version number
-#               1=generate XPI file with version number
-#          -o : 0=generate jar (no compression) and XPI (highly compressed)
-#               1=generate only XPI (no complression)
+#          -v : generate XPI file with version number
+#          -o : generate only XPI (omnixpi, no complression)
+#
 #        ex.
 #         $ ./makexpi.sh -n myaddon -v 1
 #         $ ./makexpi.sh -n myaddon
@@ -53,14 +52,16 @@
 #          + [skin]
 
 
-omnijar=0
-while getopts n:v:s:o: OPT
+use_version=0
+omnixpi=0
+
+while getopts n:os:v OPT
 do
   case $OPT in
-    "n" ) appname="$OPTARG";;
-    "v" ) use_version="$OPTARG"; use_version=`echo "$use_version" | sed -r -e 's#version=(1|yes|true)#1#ig'`;;
+    "n" ) appname="$OPTARG" ;;
+    "v" ) use_version=1 ;;
     "s" ) suffix="$OPTARG" ;;
-    "o" ) omnijar="$OPTARG" ;;
+    "o" ) omnixpi=1 ;;
   esac
 done
 
@@ -142,7 +143,7 @@ then
 
 	rm components/*.idl
 
-    if [ "$omnijar" = "0" ]
+    if [ "$omnixpi" = "0" ]
     then
 		for dirname in *
 		do
@@ -166,7 +167,7 @@ cd xpi_temp
 chmod -R 644 *.*
 
 
-if [ "$omnijar" = "0" ]
+if [ "$omnixpi" = "0" ]
 then
 	# create jar
 	mkdir -p chrome
@@ -178,7 +179,7 @@ then
 	xpi_compression_level=9
 else
 	xpi_contents="content locale skin $xpi_contents"
-	xpi_compression_level=1
+	xpi_compression_level=0
 fi
 
 
