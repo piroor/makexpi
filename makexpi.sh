@@ -1,6 +1,11 @@
 #!/bin/sh
 #
-# Usage: makexpi.sh -n <addonname> -v <flag> -s <suffix>
+# Usage: makexpi.sh -n <addonname> -v <flag> -s <suffix> -o <flag>
+#
+#          -v : 0=generate XPI file without version number
+#               1=generate XPI file with version number
+#          -o : 0=generate jar (no compression) and XPI (highly compressed)
+#               1=generate only XPI (no complression)
 #        ex.
 #         $ ./makexpi.sh -n myaddon -v 1
 #         $ ./makexpi.sh -n myaddon
@@ -48,12 +53,14 @@
 #          + [skin]
 
 
-while getopts n:v:s: OPT
+omnijar=0
+while getopts n:v:s:o: OPT
 do
   case $OPT in
     "n" ) appname="$OPTARG";;
     "v" ) use_version="$OPTARG"; use_version=`echo "$use_version" | sed -r -e 's#version=(1|yes|true)#1#ig'`;;
     "s" ) suffix="$OPTARG" ;;
+    "o" ) omnijar="$OPTARG" ;;
   esac
 done
 
@@ -135,33 +142,43 @@ then
 
 	rm components/*.idl
 
-	for dirname in *
-	do
-		if [ -d $dirname/content -o -d $dirname/skin -o -d $dirname/locale ]
-		then
-			cd $dirname
-			mkdir -p chrome
-			zip -r -0 chrome/$appname.jar content locale skin -x \*/.svn/\*
-			rm -r -f content
-			rm -r -f locale
-			rm -r -f skin
-			cd ..
-		fi
-	done
+    if [ "$omnijar" = "0" ]
+    then
+		for dirname in *
+		do
+			if [ -d $dirname/content -o -d $dirname/skin -o -d $dirname/locale ]
+			then
+				cd $dirname
+				mkdir -p chrome
+				zip -r -0 chrome/$appname.jar content locale skin -x \*/.svn/\*
+				rm -r -f content
+				rm -r -f locale
+				rm -r -f skin
+				cd ..
+			fi
+		done
+	fi
 	cd ../..
 fi
 
 
 cd xpi_temp
-chmod -R 644 *.jar *.js *.light *.inf *.rdf *.cfg *.manifest
+chmod -R 644 *.*
 
 
-# create jar
-mkdir -p chrome
-zip -r -0 ./chrome/$appname.jar content locale skin -x \*/.svn/\*
-if [ ! -f ./chrome/$appname.jar ]
+if [ "$omnijar" = "0" ]
 then
-	rm -r -f chrome
+	# create jar
+	mkdir -p chrome
+	zip -r -0 ./chrome/$appname.jar content locale skin -x \*/.svn/\*
+	if [ ! -f ./chrome/$appname.jar ]
+	then
+		rm -r -f chrome
+	fi
+	xpi_compression_level=9
+else
+	xpi_contents="content locale skin $xpi_contents"
+	xpi_compression_level=1
 fi
 
 
@@ -174,12 +191,12 @@ fi
 
 
 #create xpi (Japanese)
-zip -r -9 ../$appname${version_part}${suffix}.xpi $xpi_contents -x \*/.svn/\* || exit 1
+zip -r -$xpi_compression_level ../$appname${version_part}${suffix}.xpi $xpi_contents -x \*/.svn/\* || exit 1
 
 #create xpi without update info (Japanese)
 rm -f install.rdf
 sed -e "s#^.*<em:*\(updateURL\|updateKey\)>.*</em:*\(updateURL\|updateKey\)>##g" -e "s#^.*em:*\(updateURL\|updateKey\)=\(\".*\"\|'.*'\)##g" ../install.rdf > install.rdf
-zip -r -9 ../${appname}${version_part}${suffix}_noupdate.xpi $xpi_contents -x \*/.svn/\* || exit 1
+zip -r -$xpi_compression_level ../${appname}${version_part}${suffix}_noupdate.xpi $xpi_contents -x \*/.svn/\* || exit 1
 
 
 
@@ -200,11 +217,11 @@ then
 	cp ../en.inf ./locale.inf
 	cp ../options.$appname.en.inf ./options.inf
 	chmod 644 *.inf
-	zip -r -9 ../${appname}${suffix}${version_part}_en.xpi $xpi_contents -x \*/.svn/\* || exit 1
+	zip -r -$xpi_compression_level ../${appname}${suffix}${version_part}_en.xpi $xpi_contents -x \*/.svn/\* || exit 1
 
 	rm -f install.rdf
 	sed -e "s#^.*<em:*\(updateURL\|updateKey\)>.*</em:*\(updateURL\|updateKey\)>##g" -e "s#^.*em:*\(updateURL\|updateKey\)=\(\".*\"\|'.*'\)##g" ../install.rdf > install.rdf
-	zip -r -9 ../${appname}${suffix}${version_part}_noupdate_en.xpi $xpi_contents -x \*/.svn/\* || exit 1
+	zip -r -$xpi_compression_level ../${appname}${suffix}${version_part}_noupdate_en.xpi $xpi_contents -x \*/.svn/\* || exit 1
 fi
 
 
