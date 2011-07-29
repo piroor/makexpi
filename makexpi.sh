@@ -3,7 +3,8 @@
 # Usage: makexpi.sh -n <addonname> -v -s <suffix> -o
 #
 #          -v : generate XPI file with version number
-#          -o : generate only XPI (omnixpi, no complression)
+#          -f : generate only XPI (high complression)
+#          -o : generate only XPI (no complression, omnixpi)
 #
 #        ex.
 #         $ ./makexpi.sh -n myaddon -v 1
@@ -53,7 +54,8 @@
 
 
 use_version=0
-omnixpi=0
+nojar=0
+xpi_compression_level=9
 
 while getopts n:os:v OPT
 do
@@ -61,7 +63,8 @@ do
     "n" ) appname="$OPTARG" ;;
     "v" ) use_version=1 ;;
     "s" ) suffix="$OPTARG" ;;
-    "o" ) omnixpi=1 ;;
+    "o" ) nojar=1; xpi_compression_level=0 ;;
+    "f" ) nojar=1 ;;
   esac
 done
 
@@ -143,7 +146,7 @@ then
 
 	rm components/*.idl
 
-    if [ "$omnixpi" = "0" ]
+    if [ "$nojar" = "0" ]
     then
 		for dirname in *
 		do
@@ -167,7 +170,7 @@ cd xpi_temp
 chmod -R 644 *.*
 
 
-if [ "$omnixpi" = "0" ]
+if [ "$nojar" = "0" ]
 then
 	# create jar
 	mkdir -p chrome
@@ -176,10 +179,8 @@ then
 	then
 		rm -r -f chrome
 	fi
-	xpi_compression_level=9
 else
 	xpi_contents="content locale skin $xpi_contents"
-	xpi_compression_level=0
 fi
 
 
