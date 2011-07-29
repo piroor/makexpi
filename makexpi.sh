@@ -57,7 +57,7 @@ use_version=0
 nojar=0
 xpi_compression_level=9
 
-while getopts n:os:v OPT
+while getopts n:os:vf OPT
 do
   case $OPT in
     "n" ) appname="$OPTARG" ;;
