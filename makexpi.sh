@@ -145,7 +145,6 @@ cp -r skin ./xpi_temp/
 
 cd xpi_temp
 mv install.rdf ./install.rdf.base
-
 if [ "$min_version" != "0" ]
 then
   cat install.rdf.base \
@@ -154,7 +153,6 @@ then
            -e "s#em:minVersion=\(\".*\"\|'.*'\)#em:minVersion=\"${min_version}\"#g" \
        > install\.rdf\.base )
 fi
-
 if [ "$max_version" != "0" ]
 then
   cat install.rdf.base \
@@ -163,6 +161,7 @@ then
            -e "s#em:maxVersion=\(\".*\"\|'.*'\)#em:maxVersion=\"${max_version}\"#g" \
        > install\.rdf\.base )
 fi
+cd ..
 
 # pack platform related resources
 if [ -d ./platform ]
