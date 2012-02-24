@@ -148,18 +148,20 @@ mv install.rdf ./install.rdf.base
 if [ "$min_version" != "0" ]
 then
   cat install.rdf.base \
-    | (rm install\.rdf\.base; \
-       sed -e "s#<em:minVersion>.*</em:minVersion>#<em:minVersion>${min_version}</em:minVersion>#g" \
-           -e "s#em:minVersion=\(\".*\"\|'.*'\)#em:minVersion=\"${min_version}\"#g" \
-       > install\.rdf\.base )
+    | sed -e "s#<em:minVersion>.*</em:minVersion>#<em:minVersion>${min_version}</em:minVersion>#g" \
+          -e "s#em:minVersion=\(\".*\"\|'.*'\)#em:minVersion=\"${min_version}\"#g" \
+    > install.rdf
+  rm install.rdf.base
+  mv install.rdf ./install.rdf.base
 fi
 if [ "$max_version" != "0" ]
 then
   cat install.rdf.base \
-    | (rm install\.rdf\.base;\
-       sed -e "s#<em:maxVersion>.*</em:maxVersion>#<em:maxVersion>${max_version}</em:maxVersion>#g" \
-           -e "s#em:maxVersion=\(\".*\"\|'.*'\)#em:maxVersion=\"${max_version}\"#g" \
-       > install\.rdf\.base )
+    | sed -e "s#<em:maxVersion>.*</em:maxVersion>#<em:maxVersion>${max_version}</em:maxVersion>#g" \
+          -e "s#em:maxVersion=\(\".*\"\|'.*'\)#em:maxVersion=\"${max_version}\"#g" \
+    > install.rdf
+  rm install.rdf.base
+  mv install.rdf ./install.rdf.base
 fi
 cd ..
 
