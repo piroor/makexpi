@@ -5,6 +5,8 @@
 #          -v : generate XPI file with version number
 #          -f : generate only XPI (high complression)
 #          -o : generate only XPI (no complression, omnixpi)
+#          -m : minVersion
+#          -x : maxVersion
 #
 #        ex.
 #         $ ./makexpi.sh -n myaddon -v 1
@@ -56,15 +58,19 @@
 use_version=0
 nojar=0
 xpi_compression_level=9
+min_version=0
+max_version=0
 
-while getopts n:os:vf OPT
+while getopts fm:n:os:vx: OPT
 do
   case $OPT in
-    "n" ) appname="$OPTARG" ;;
-    "v" ) use_version=1 ;;
-    "s" ) suffix="$OPTARG" ;;
-    "o" ) nojar=1; xpi_compression_level=0 ;;
     "f" ) nojar=1 ;;
+    "m" ) min_version="$OPTARG" ;;
+    "n" ) appname="$OPTARG" ;;
+    "o" ) nojar=1; xpi_compression_level=0 ;;
+    "s" ) suffix="$OPTARG" ;;
+    "v" ) use_version=1 ;;
+    "x" ) max_version="$OPTARG" ;;
   esac
 done
 
@@ -130,13 +136,33 @@ rm -f ${appname}${suffix}-*.lzh
 mkdir -p xpi_temp
 
 for f in ${xpi_contents}; do
-	cp -rp --parents ${f} xpi_temp
+	cp -rp --parents ${f} xpi_temp/
 done
 
 cp -r content ./xpi_temp/
 cp -r locale ./xpi_temp/
 cp -r skin ./xpi_temp/
 
+cd xpi_temp
+mv install.rdf ./install.rdf.base
+
+if [ "$min_version" != "0" ]
+then
+  cat install.rdf.base \
+    | (rm install\.rdf\.base; \
+       sed -e "s#<em:minVersion>.*</em:minVersion>#<em:minVersion>${min_version}</em:minVersion>#g" \
+           -e "s#em:minVersion=\(\".*\"\|'.*'\)#em:minVersion=\"${min_version}\"#g" \
+       > install\.rdf\.base )
+fi
+
+if [ "$max_version" != "0" ]
+then
+  cat install.rdf.base \
+    | (rm install\.rdf\.base;\
+       sed -e "s#<em:maxVersion>.*</em:maxVersion>#<em:maxVersion>${max_version}</em:maxVersion>#g" \
+           -e "s#em:maxVersion=\(\".*\"\|'.*'\)#em:maxVersion=\"${max_version}\"#g" \
+       > install\.rdf\.base )
+fi
 
 # pack platform related resources
 if [ -d ./platform ]
@@ -193,11 +219,16 @@ fi
 
 
 #create xpi (Japanese)
+cp install.rdf.base install.rdf
 zip -r -$xpi_compression_level ../$appname${version_part}${suffix}.xpi $xpi_contents -x \*/.svn/\* || exit 1
 
 #create xpi without update info (Japanese)
 rm -f install.rdf
-sed -e "s#^.*<em:*\(updateURL\|updateKey\)>.*</em:*\(updateURL\|updateKey\)>##g" -e "s#^.*em:*\(updateURL\|updateKey\)=\(\".*\"\|'.*'\)##g" ../install.rdf > install.rdf
+cat install.rdf.base \
+  | sed -e "s#^.*<em:*\(updateURL\|updateKey\)>.*</em:*\(updateURL\|updateKey\)>##g" \
+        -e "s#^.*em:*\(updateURL\|updateKey\)=\(\".*\"\|'.*'\)##g" \
+  > install.rdf
+
 zip -r -$xpi_compression_level ../${appname}${version_part}${suffix}_noupdate.xpi $xpi_contents -x \*/.svn/\* || exit 1
 
 
