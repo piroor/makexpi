@@ -1,8 +1,0 @@
-installToProfile=Do you want this package to be installed to your profile directory?\n(Cancel will install into the application directory for all users, but Administrator permissions required. )
-JLP=Do you want the Japanese Language Pack of this package to be installed?
-complete=Installation finished.\nPlease restart the browser.\n\n
-installed=Installed files are:
-exists=Instalation canceled, because an Old version has been not uninstalled completely.\nPlease retry after removing old files.
-useLightPref=Do you want this extension to be started with Light Settings?\nIt makes the browser fast but some features are disabled.\n(You can enable these features after installation)
-newTypeOnly=*This extension is only for Mozilla Firefox.\nInstallation canceled.
-permissionNotes=Installed files are accessible only in this account.\nYou have to change permissions of these files, if you want this extension to be available in other accounts too.

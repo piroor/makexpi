@@ -1,3 +1,0 @@
-contextMenuRearrange=Do you want the ContextMenu Rearrangement to be installed?\n\nThis module provides following features:\n- rearrange menuitems of the context menu on tabs
-sessionManager=Do you want the Tab Session Management to be installed?\n\nThis module provides following features:\n- reopen tabs recently closed, from the list\n- save and load tab sessions\n- restore last visited tabs on the startup\n- restore last tabs, after crash
-ctrlPopup=Do you want the Popup Controller to be installed?\n\nThis module provides following features:\n- control popups flexibly and delicately, for JavaScript\n\n*NOTE: This module possibly blocks allowed popups wrongly or breaks popups in some website.
