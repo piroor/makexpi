@@ -55,6 +55,11 @@
 #          + [skin]
 
 
+case $(uname) in
+  Darwin|*BSD) sed="sed -E" ;;
+  *)           sed="sed -r" ;;
+esac
+
 use_version=0
 nojar=0
 xpi_compression_level=9
@@ -100,14 +105,14 @@ fi
 
 if [ "$use_version" = '' ]
 then
-	use_version=`echo "$2" | sed -r -e 's#version=(1|yes|true)#1#ig'`
+	use_version=`echo "$2" | sed -e 's#version=(1|yes|true)#1#ig'`
 fi
 
 
-version=`grep 'em:version=' install.rdf | sed -r -e 's#em:version=##g' | sed -r -e 's#[ \t\r\n"]##g'`
+version=`grep 'em:version=' install.rdf | sed -e 's#em:version=##g' | sed -e 's#[ \t\r\n"]##g'`
 if [ "$version" = '' ]
 then
-	version=`grep '<em:version>' install.rdf | sed -r -e 's#</?em:version>##g' | sed -r -e 's#[ \t\r\n"]##g'`
+	version=`grep '<em:version>' install.rdf | sed -e 's#</?em:version>##g' | sed -e 's#[ \t\r\n"]##g'`
 fi
 if [ "$version" != '' ]
 then
@@ -185,7 +190,6 @@ then
 				rm -r -f content
 				rm -r -f locale
 				rm -r -f skin
-				cd ..
 			fi
 		done
 	fi
