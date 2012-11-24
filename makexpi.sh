@@ -230,8 +230,8 @@ zip -r -$xpi_compression_level ../$appname${version_part}${suffix}.xpi $xpi_cont
 #create xpi without update info (Japanese)
 rm -f install.rdf
 cat install.rdf.base \
-  | $sed -e "s#^.*<em:*\(updateURL\|updateKey\)>.*</em:*\(updateURL\|updateKey\)>##g" \
-         -e "s#^.*em:*\(updateURL\|updateKey\)=\(\".*\"\|'.*'\)##g" \
+  | $sed -e "s#^.*<em:(updateURL|updateKey)>.*</em:(updateURL|updateKey)>##g" \
+         -e "s#^.*em:(updateURL|updateKey)=(\".*\"|'.*')##g" \
   > install.rdf
 
 zip -r -$xpi_compression_level ../${appname}${version_part}${suffix}_noupdate.xpi $xpi_contents -x \*/.svn/\* || exit 1
