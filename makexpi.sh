@@ -56,8 +56,8 @@
 
 
 case $(uname) in
-  Darwin|*BSD) sed="sed -E" ;;
-  *)           sed="sed -r" ;;
+  Darwin|*BSD|CYGWIN*) sed="sed -E" ;;
+  *)                   sed="sed -r" ;;
 esac
 
 use_version=0
