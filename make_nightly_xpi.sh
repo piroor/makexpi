@@ -58,7 +58,8 @@ $sed -e "s#([^/]em:updateKey[=>\"]+)[^\"<]+#\\1${public_key}#" \
 # 自動生成されたバージョン番号を控えておく。
 version=$(cat install.rdf | \
           grep "em:version" | head -n 1 | \
-          $sed -e "s#[^\">]*[\">]([^\"<]+).*#\\1#")
+          $sed -e "s#[^\">]*[\">]([^\"<]+).*#\\1#" | \
+          tr -d "\r" | tr -d "\n")
 echo "$version" > nightly_version.txt
 
 make
