@@ -64,7 +64,6 @@ else
   echo "$version" > release_version.txt
 
   # リリースビルド用として、install.rdfを書き換える。
-  # バージョン番号の末尾に今日の日付を付ける。
   $sed -e "s/(em:version=\")[^\"]*/\\1$version/" \
        -i install.rdf
   update_rdf="${package_name}.update.rdf"
