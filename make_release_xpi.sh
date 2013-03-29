@@ -32,6 +32,13 @@ esac
 
 cd "$project_dir"
 
+
+tag=$(git describe | cut -d "-" -f 1)
+current=$(git describe | cut -d "-" -f 3)
+
+git stash save
+git checkout "$tag"
+
 package_name=$(cat "$project_dir/Makefile" | \
                grep "PACKAGE_NAME" | \
                head -n 1 | cut -d "=" -f 2 | \
@@ -48,8 +55,6 @@ version=$(cat "$project_dir/history.en.md" | \
 # 自動生成されたバージョン番号を控えておく。
 echo "$version" > release_version.txt
 
-cp install.rdf install.rdf.bak
-
 # リリースビルド用として、install.rdfを書き換える。
 # バージョン番号の末尾に今日の日付を付ける。
 $sed -e "s/(em:version=\")[^\"]*/\\1$version/" \
@@ -63,7 +68,8 @@ $sed -e "s#([^/]em:updateKey[=>\"]+)[^\"<]+#\\1${public_key}#" \
 
 make
 
-rm install.rdf
-mv install.rdf.bak install.rdf
+git reset --hard
+git checkout "$current"
+git stash pop
 
 exit 0
