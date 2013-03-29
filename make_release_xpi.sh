@@ -53,7 +53,7 @@ version=$(cat "$project_dir/history.en.md" | \
           tr -d "\r" | tr -d "\n")
 
 result=0
-if [ "$package_name" = ""]; then
+if [ "$package_name" = "" ]; then
   echo "ERROR: couldn't detect the project name for $project_dir"
   result=1
 elif [ "$version" = "" ]; then
