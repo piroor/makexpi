@@ -52,24 +52,34 @@ version=$(cat "$project_dir/history.en.md" | \
           $sed -e "s/^ - //" | \
           tr -d "\r" | tr -d "\n")
 
-# 自動生成されたバージョン番号を控えておく。
-echo "$version" > release_version.txt
+result=0
+if [ "$package_name" = ""]; then
+  echo "ERROR: couldn't detect the project name for $project_dir"
+  result=1
+elif [ "$version" = "" ]; then
+  echo "ERROR: couldn't detect the latest release version of $package_name"
+  result=1
+else
+  # 自動生成されたバージョン番号を控えておく。
+  echo "$version" > release_version.txt
 
-# リリースビルド用として、install.rdfを書き換える。
-# バージョン番号の末尾に今日の日付を付ける。
-$sed -e "s/(em:version=\")[^\"]*/\\1$version/" \
-     -i install.rdf
-update_rdf="${package_name}.update.rdf"
-# update.rdfの参照先と、公開鍵を書き換える。
-$sed -e "s#/xul/update.rdf#/xul/xpi/updateinfo/${update_rdf}#" \
-     -i install.rdf
-$sed -e "s#([^/]em:updateKey[=>\"]+)[^\"<]+#\\1${public_key}#" \
-     -i install.rdf
+  # リリースビルド用として、install.rdfを書き換える。
+  # バージョン番号の末尾に今日の日付を付ける。
+  $sed -e "s/(em:version=\")[^\"]*/\\1$version/" \
+       -i install.rdf
+  update_rdf="${package_name}.update.rdf"
+  # update.rdfの参照先と、公開鍵を書き換える。
+  $sed -e "s#/xul/update.rdf#/xul/xpi/updateinfo/${update_rdf}#" \
+       -i install.rdf
+  $sed -e "s#([^/]em:updateKey[=>\"]+)[^\"<]+#\\1${public_key}#" \
+       -i install.rdf
 
-make
+  make
 
-git reset --hard
+  git reset --hard
+fi
+
 git checkout "$current"
 git stash pop
 
-exit 0
+exit $result
