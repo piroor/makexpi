@@ -71,7 +71,9 @@ else
   # update.rdfの参照先と、公開鍵を書き換える。
   $sed -e "s#/xul/update.rdf#/xul/xpi/updateinfo/${update_rdf}#" \
        -i install.rdf
-  $sed -e "s#([^/]em:updateKey[=>\"]+)[^\"<]+#\\1${public_key}#" \
+  $sed -e "s#([^/]em:updateURL[=>\"]+)[^\"<]*#\\1${update_rdf}#" \
+       -i install.rdf
+  $sed -e "s#([^/]em:updateKey[=>\"]+)[^\"<]*#\\1${public_key}#" \
        -i install.rdf
 
   make
