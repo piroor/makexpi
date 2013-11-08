@@ -50,6 +50,7 @@ version=$(cat "$project_dir/history.en.md" | \
           grep -E "^ - [0-9\\.]+" | \
           head -n 1 | \
           $sed -e "s/^ - //" | \
+          $sed -e "s/ *\([^\)]+\) *\$//" | \
           tr -d "\r" | tr -d "\n")
 
 result=0
