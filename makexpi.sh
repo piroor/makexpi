@@ -60,6 +60,11 @@ case $(uname) in
   *)                   sed="sed -r" ;;
 esac
 
+case $(uname) in
+  Darwin|*BSD|CYGWIN*) cp="gcp" ;;
+  *)                   cp="cp" ;;
+esac
+
 use_version=0
 nojar=0
 xpi_compression_level=9
@@ -141,12 +146,12 @@ rm -f ${appname}${suffix}-*.lzh
 mkdir -p xpi_temp
 
 for f in ${xpi_contents}; do
-	cp -rp --parents ${f} xpi_temp/
+        $cp -rp --parents ${f} xpi_temp/
 done
 
-cp -r content ./xpi_temp/
-cp -r locale ./xpi_temp/
-cp -r skin ./xpi_temp/
+$cp -r content ./xpi_temp/
+$cp -r locale ./xpi_temp/
+$cp -r skin ./xpi_temp/
 
 cd xpi_temp
 mv install.rdf ./install.rdf.base
@@ -173,7 +178,7 @@ cd ..
 # pack platform related resources
 if [ -d ./platform ]
 then
-	cp -r platform ./xpi_temp/
+	$cp -r platform ./xpi_temp/
 	cd xpi_temp/platform
 
 	rm components/*.idl
@@ -217,14 +222,14 @@ fi
 
 if [ -f ./install.js ]
 then
-	cp ../ja.inf ./locale.inf
-	cp ../options.$appname.ja.inf ./options.inf
+	$cp ../ja.inf ./locale.inf
+	$cp ../options.$appname.ja.inf ./options.inf
 	chmod 644 *.inf
 fi
 
 
 #create xpi (Japanese)
-cp install.rdf.base install.rdf
+$cp install.rdf.base install.rdf
 zip -r -$xpi_compression_level ../$appname${version_part}${suffix}.xpi $xpi_contents -x \*/.svn/\* || exit 1
 
 #create xpi without update info (Japanese)
@@ -251,9 +256,9 @@ then
 	rm -f install.rdf
 	rm -f locale.inf
 	rm -f options.inf
-	cp ../install.rdf ./install.rdf
-	cp ../en.inf ./locale.inf
-	cp ../options.$appname.en.inf ./options.inf
+	$cp ../install.rdf ./install.rdf
+	$cp ../en.inf ./locale.inf
+	$cp ../options.$appname.en.inf ./options.inf
 	chmod 644 *.inf
 	zip -r -$xpi_compression_level ../${appname}${suffix}${version_part}_en.xpi $xpi_contents -x \*/.svn/\* || exit 1
 
@@ -268,7 +273,7 @@ fi
 if [ -d ../meta ]
 then
 	rm -f ../meta/${appname}${suffix}.xpi
-	cp ../${appname}${suffix}${version_part}.xpi ../meta/${appname}${suffix}.xpi
+	$cp ../${appname}${suffix}${version_part}.xpi ../meta/${appname}${suffix}.xpi
 fi
 
 # end
