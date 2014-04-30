@@ -146,7 +146,7 @@ rm -f ${appname}${suffix}-*.lzh
 mkdir -p xpi_temp
 
 for f in ${xpi_contents}; do
-        $cp -rp --parents ${f} xpi_temp/
+	$cp -rp --parents ${f} xpi_temp/
 done
 
 $cp -r content ./xpi_temp/
