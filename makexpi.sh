@@ -65,6 +65,11 @@ case $(uname) in
   *)                   cp="cp" ;;
 esac
 
+case $(uname) in
+  Darwin|*BSD) sha1sum="gsha1sum" ;;
+  *)           sha1sum="sha1sum" ;;
+esac
+
 use_version=0
 nojar=0
 xpi_compression_level=9
@@ -281,6 +286,6 @@ cd ..
 rm -r -f xpi_temp
 
 # create hash
-sha1sum -b ${appname}*.xpi > sha1hash.txt
+$sha1sum -b ${appname}*.xpi > sha1hash.txt
 
 exit 0;
