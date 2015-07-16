@@ -42,7 +42,7 @@ git checkout "$tag"
 package_name=$(cat "$project_dir/Makefile" | \
                grep "PACKAGE_NAME" | \
                head -n 1 | cut -d "=" -f 2 | \
-               $sed -e "s/\\s*//#")
+               $sed -e "s/\\s*//")
 public_key=$(cat "$public_key" | \
              grep -v -E "^--" | \
              tr -d "\r" | tr -d "\n")
