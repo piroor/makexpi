@@ -2,13 +2,15 @@
 
 tools_dir=$(cd $(dirname $0) && pwd)
 
-while getopts d:p: OPT
+while getopts d:p:o: OPT
 do
   case $OPT in
     # リポジトリをcloneした先のディレクトリ。
     "d" ) project_dir="$OPTARG" ;;
     # keyfile.pubのパス。
     "p" ) public_key="$OPTARG" ;;
+    # project owner
+    "o" ) project_owner="$OPTARG" ;;
   esac
 done
 
@@ -30,8 +32,16 @@ case $(uname) in
   *)                   sed="sed -r" ;;
 esac
 
-cd "$project_dir"
-
+if [ -d "$project_dir" ]
+then
+  cd "$project_dir"
+else
+  project_name=$(basename "$project_dir")
+  if [ "$project_owner" = "" ]; then project_owner=$project_name; fi
+  cd $(dirname "$project_dir")
+  git clone git@github.com:$project_owner/$project_name.git
+  cd "$project_dir"
+fi
 
 tag=$(git describe | cut -d "-" -f 1)
 current=$(git describe | cut -d "-" -f 3)
