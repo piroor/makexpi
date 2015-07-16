@@ -61,13 +61,31 @@ case $(uname) in
 esac
 
 case $(uname) in
-  Darwin|*BSD|CYGWIN*) cp="gcp" ;;
-  *)                   cp="cp" ;;
+  Darwin|*BSD|CYGWIN*)
+    if gcp --version
+    then
+      cp="gcp"
+    else
+      cp="cp"
+    fi
+    ;;
+  *)
+    cp="cp"
+    ;;
 esac
 
 case $(uname) in
-  Darwin|*BSD) sha1sum="gsha1sum" ;;
-  *)           sha1sum="sha1sum" ;;
+  Darwin|*BSD)
+    if gsha1sum --version
+    then
+      sha1sum="gsha1sum"
+    else
+      sha1sum="sha1sum"
+    fi
+    ;;
+  *)
+    sha1sum="sha1sum"
+    ;;
 esac
 
 use_version=0
