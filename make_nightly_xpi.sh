@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 tools_dir=$(cd $(dirname $0) && pwd)
 

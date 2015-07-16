@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 #
 # Usage: makexpi.sh -n <addonname> -v -s <suffix> -o
 #
