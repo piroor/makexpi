@@ -56,26 +56,14 @@
 
 
 case $(uname) in
-  Darwin|*BSD|CYGWIN*) sed="sed -E" ;;
-  *)                   sed="sed -r" ;;
-esac
-
-case $(uname) in
   Darwin|*BSD|CYGWIN*)
+    sed="sed -E"
     if gcp --version
     then
       cp="gcp"
     else
       cp="cp"
     fi
-    ;;
-  *)
-    cp="cp"
-    ;;
-esac
-
-case $(uname) in
-  Darwin|*BSD)
     if gsha1sum --version
     then
       sha1sum="gsha1sum"
@@ -84,6 +72,8 @@ case $(uname) in
     fi
     ;;
   *)
+    sed="sed -r"
+    cp="cp"
     sha1sum="sha1sum"
     ;;
 esac
