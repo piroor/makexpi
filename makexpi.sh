@@ -58,7 +58,7 @@
 case $(uname) in
   Darwin|*BSD|CYGWIN*)
     sed="sed -E"
-    if gcp --version
+    if gcp --version && gcp --version | grep GNU
     then
       cp="gcp"
     else
