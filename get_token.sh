@@ -13,8 +13,6 @@ then
   npm install jsonwebtoken --save
 fi
 
-expire=60
-
 while getopts k:s:e: OPT
 do
   case $OPT in
@@ -26,6 +24,8 @@ done
 
 [ "$key" = "" ] && echo 'You must specify the issuer via "-k"' && exit 1
 [ "$secret" = "" ] && echo 'You must specify the secret via "-s"' && exit 1
+
+[ "$expire" = "" ] && expire=60
 
 echo "var jwt = require('jsonwebtoken'); \
  \
