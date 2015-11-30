@@ -22,8 +22,8 @@ do
   esac
 done
 
-[ "$key" = "" ] && echo 'You must specify the issuer via "-k"' && exit 1
-[ "$secret" = "" ] && echo 'You must specify the secret via "-s"' && exit 1
+[ "$key" = "" ] && echo 'You must specify the issuer via "-k"' 1>&2 && exit 1
+[ "$secret" = "" ] && echo 'You must specify the secret via "-s"' 1>&2 && exit 1
 
 [ "$expire" = "" ] && expire=60
 
