@@ -33,7 +33,7 @@ done
 
 if [ "$token" = "" ]
 then
-  token=$($tools_dir/get_token.sh -k $key -s $secret -e $expire)
+  token=$($tools_dir/get_token.sh -k "$key" -s "$secret" -e "$expire")
   [ "$token" = "" ] && exit 1
 fi
 
