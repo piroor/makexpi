@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Usage: get-token.sh -k <key> -s <secret> -e <expire-seconds>
+# Usage: get_token.sh -k <key> -s <secret> -e <expire-seconds>
 #
 #          -k : key aka JWT issuer, like "user:xxxxxx:xxx"
 #          -s : JWT secret, like "0123456789abcdef..."
