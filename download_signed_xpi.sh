@@ -22,9 +22,9 @@ do
   esac
 done
 
-[ "$token" = "" ] && echo 'You must specify a JWT token via "-t"' && exit 1
-[ "$id" = "" ] && echo 'You must specify the addon ID via "-i"' && exit 1
-[ "$version" = "" ] && echo 'You must specify the addon ID via "-v"' && exit 1
+[ "$token" = "" ] && echo 'You must specify a JWT token via "-t"' 1>&2 && exit 1
+[ "$id" = "" ] && echo 'You must specify the addon ID via "-i"' 1>&2 && exit 1
+[ "$version" = "" ] && echo 'You must specify the addon ID via "-v"' 1>&2 && exit 1
 
 response=$(curl "https://addons.mozilla.org/api/v3/addons/$id/versions/$version/" \
              -H "Authorization: JWT $token")

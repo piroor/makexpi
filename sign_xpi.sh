@@ -20,8 +20,8 @@ do
   esac
 done
 
-[ "$token" = "" ] && echo 'You must specify a JWT token via "-t"' && exit 1
-[ "$xpi" = "" ] && echo 'You must specify a path to XPI via "-p"' && exit 1
+[ "$token" = "" ] && echo 'You must specify a JWT token via "-t"' 1>&2 && exit 1
+[ "$xpi" = "" ] && echo 'You must specify a path to XPI via "-p"' 1>&2 && exit 1
 
 install_rdf=$(unzip -p $xpi install.rdf)
 
