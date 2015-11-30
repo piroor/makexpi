@@ -6,6 +6,10 @@
 #          -i : Addon ID, like: "myaddon@example.com"
 #          -v : Version, like: "1.1"
 #
+#          -k : key aka JWT issuer, like "user:xxxxxx:xxx"
+#          -s : JWT secret, like "0123456789abcdef..."
+#          -e : seconds to expire the token
+#
 # See also: https://blog.mozilla.org/addons/2015/11/20/signing-api-now-available/
 
 case $(uname) in
@@ -13,14 +17,23 @@ case $(uname) in
   *)                   sed="sed -r" ;;
 esac
 
-while getopts t:i:v: OPT
+while getopts t:i:v:k:s:e: OPT
 do
   case $OPT in
     "t" ) token="$OPTARG" ;;
     "i" ) id="$OPTARG" ;;
     "v" ) version="$OPTARG" ;;
+    "k" ) key="$OPTARG" ;;
+    "s" ) secret="$OPTARG" ;;
+    "e" ) expire="$OPTARG" ;;
   esac
 done
+
+if [ "$token" = "" ]
+then
+  token=$(./get_token.sh -k "$key" -s "$secret" -e "$expire")
+  [ "$token" = "" ] && exit 1
+fi
 
 [ "$token" = "" ] && echo 'You must specify a JWT token via "-t"' 1>&2 && exit 1
 [ "$id" = "" ] && echo 'You must specify the addon ID via "-i"' 1>&2 && exit 1
