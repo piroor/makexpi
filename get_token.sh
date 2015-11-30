@@ -40,6 +40,6 @@ var payload = { \
 var secret = '$secret'; \
 var token = jwt.sign(payload, secret, { algorithm: 'HS256' }); \
  \
-console.log(token); " | nodejs
+console.log(token);" | nodejs
 
 exit 0
