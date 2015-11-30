@@ -49,7 +49,12 @@ then
   uri=$(echo "$response" | \
           grep "download_url" | \
           $sed -e 's/.*"download_url"\s*:\s*"([^"]+).*/\1/')
-  curl "$uri" -o "$id-$version-signed.xpi"
+  curl "$uri" -g \
+    -s \
+    -L \
+    -D - \
+    -o "$id-$version-signed.xpi" \
+    -H "Authorization: JWT $token"
   exit 0
 else
   echo "Not signed yet." 1>&2
