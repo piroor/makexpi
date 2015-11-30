@@ -54,5 +54,11 @@ response=$(curl "https://addons.mozilla.org/api/v3/addons/$id/versions/$version/
              -H "Authorization: JWT $token" \
              -g -XPUT --form "upload=@$xpi")
 
-
-exit 0
+if echo "$response" | grep -E '"signed"\s*:\s*true'
+then
+  ./download_signed_xpi.sh -t "$token" -i "$id" -v "$version"
+  exit 0
+else
+  echo "Not signed yet. You must retry downloading after signed." 1>&2
+  exit 1
+fi
