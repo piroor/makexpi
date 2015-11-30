@@ -46,7 +46,9 @@ response=$(curl "https://addons.mozilla.org/api/v3/addons/$id/versions/$version/
 
 if echo "$response" | grep -E '"signed"\s*:\s*true'
 then
-  uri=$(echo "$response" | $sed -e 's/.+"download_url"\s*:\s*"([^"]+).+/\1/')
+  uri=$(echo "$response" | \
+          grep "download_url" | \
+          $sed -e 's/.*"download_url"\s*:\s*"([^"]+).*/\1/')
   curl "$uri" -o "$id-$version-signed.xpi"
   exit 0
 else
