@@ -49,6 +49,8 @@ id=$(extract_initial_em_value id)
 version=$(extract_initial_em_value version)
 
 response=$(curl "https://addons.mozilla.org/api/v3/addons/$id/versions/$version/" \
+             -s \
+             -D - \
              -H "Authorization: JWT $token" \
              -g -XPUT --form "upload=@$xpi")
 

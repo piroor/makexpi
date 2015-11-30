@@ -40,6 +40,8 @@ fi
 [ "$version" = "" ] && echo 'You must specify the addon ID via "-v"' 1>&2 && exit 1
 
 response=$(curl "https://addons.mozilla.org/api/v3/addons/$id/versions/$version/" \
+             -s \
+             -D - \
              -H "Authorization: JWT $token")
 
 if echo "$response" | grep -E '"signed"\s*:\s*true'
