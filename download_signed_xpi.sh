@@ -23,8 +23,8 @@ do
 done
 
 [ "$token" = "" ] && echo 'You must specify a JWT token via "-t"' && exit 1
-[ "$i" = "" ] && echo 'You must specify the addon ID via "-i"' && exit 1
-[ "$v" = "" ] && echo 'You must specify the addon ID via "-v"' && exit 1
+[ "$id" = "" ] && echo 'You must specify the addon ID via "-i"' && exit 1
+[ "$version" = "" ] && echo 'You must specify the addon ID via "-v"' && exit 1
 
 response=$(curl "https://addons.mozilla.org/api/v3/addons/$id/versions/$version/" \
              -H "Authorization: JWT $token")
