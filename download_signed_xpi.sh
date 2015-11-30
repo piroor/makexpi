@@ -12,6 +12,8 @@
 #
 # See also: https://blog.mozilla.org/addons/2015/11/20/signing-api-now-available/
 
+tools_dir=$(cd $(dirname $0) && pwd)
+
 case $(uname) in
   Darwin|*BSD|CYGWIN*) sed="sed -E" ;;
   *)                   sed="sed -r" ;;
@@ -31,7 +33,7 @@ done
 
 if [ "$token" = "" ]
 then
-  token=$(./get_token.sh -k "$key" -s "$secret" -e "$expire")
+  token=$($tools_dir/get_token.sh -k "$key" -s "$secret" -e "$expire")
   [ "$token" = "" ] && exit 1
 fi
 

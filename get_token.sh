@@ -8,6 +8,8 @@
 #
 # See also: https://blog.mozilla.org/addons/2015/11/20/signing-api-now-available/
 
+tools_dir=$(cd $(dirname $0) && pwd)
+
 if [ ! -d ./node_modules/jsonwebtoken ]
 then
   npm install jsonwebtoken --save

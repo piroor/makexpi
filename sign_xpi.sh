@@ -11,6 +11,8 @@
 #
 # See also: https://blog.mozilla.org/addons/2015/11/20/signing-api-now-available/
 
+tools_dir=$(cd $(dirname $0) && pwd)
+
 case $(uname) in
   Darwin|*BSD|CYGWIN*) sed="sed -E" ;;
   *)                   sed="sed -r" ;;
@@ -29,7 +31,7 @@ done
 
 if [ "$token" = "" ]
 then
-  token=$(./get_token.sh -k $key -s $secret -e $expire)
+  token=$($tools_dir/get_token.sh -k $key -s $secret -e $expire)
   [ "$token" = "" ] && exit 1
 fi
 
@@ -56,7 +58,7 @@ response=$(curl "https://addons.mozilla.org/api/v3/addons/$id/versions/$version/
 
 if echo "$response" | grep -E '"signed"\s*:\s*true'
 then
-  ./download_signed_xpi.sh -t "$token" -i "$id" -v "$version"
+  $tools_dir/download_signed_xpi.sh -t "$token" -i "$id" -v "$version"
   exit 0
 else
   echo "Not signed yet. You must retry downloading after signed." 1>&2
