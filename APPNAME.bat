@@ -1,7 +1,5 @@
 setlocal
 set appname=%~n0
 
-copy buildscript\makexpi.sh .\
-bash makexpi.sh %appname% version=0
-del makexpi.sh
+bash makexpi\makexpi.sh -n %appname%
 endlocal
