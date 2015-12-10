@@ -41,6 +41,8 @@ fi
 [ "$xpi" = "" ] && echo 'You must specify a path to XPI via "-p"' 1>&2 && exit 1
 
 [ "$output" = "" ] && output=.
+output="$(cd "$output" && pwd)"
+xpi="$(cd $(dirname "$xpi") && pwd)/$(basename "$xpi")"
 
 install_rdf=$(unzip -p $xpi install.rdf)
 

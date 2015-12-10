@@ -44,6 +44,7 @@ fi
 [ "$version" = "" ] && echo 'You must specify the addon ID via "-v"' 1>&2 && exit 1
 
 [ "$output" = "" ] && output=.
+output="$(cd "$output" && pwd)"
 
 response=$(curl "https://addons.mozilla.org/api/v3/addons/$id/versions/$version/" \
              -s \
