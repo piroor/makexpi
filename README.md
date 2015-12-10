@@ -54,3 +54,6 @@ then set them to environment variables `JWT_KEY` and `JWT_SECRET` and run `make 
 If your XPI package is automatically signed, it will be downloaded to the current directory.
 However, if it requires manual review by AMO editors, you'll have to download it by hand after preliminary or full review.
 
+You can use this command to upload new version for your public (listed) addon also.
+Note that a new version uploaded by this command will have no version description.
+After you upload a new version, you'll have to log in to the developer hub and complete the version manually.
