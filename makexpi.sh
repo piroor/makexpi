@@ -129,10 +129,14 @@ then
 fi
 
 
-version=`grep 'em:version=' install.rdf | $sed -e 's#em:version=##g' | $sed -e 's#[ \t\r\n"]##g'`
+version=$(grep 'em:version=' install.rdf | \
+            $sed -e 's#em:version=##g' | \
+            $sed -e 's#[ \t\r\n"]##g')
 if [ "$version" = '' ]
 then
-	version=`grep '<em:version>' install.rdf | $sed -e 's#</?em:version>##g' | $sed -e 's#[ \t\r\n"]##g'`
+	version=$(grep '<em:version>' install.rdf | \
+	            $sed -e 's#</?em:version>##g' | \
+	            $sed -e 's#[ \t\r\n"]##g')
 fi
 if [ "$version" != '' ]
 then
