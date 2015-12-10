@@ -34,7 +34,7 @@ You'll just have to type `make` to build XPI package, like:
 The file with a suffix `_noupdate` is a sanitized version for the Mozilla Add-ons.
 Even if you specify your custom `updateURL` and `updateKEY` in your `install.rdf`, they are automatically sanitized.
 
-### How to sign built XPI? / How to upload built XPI to Mozilla Add-ons website?
+### How to sign to built XPI? / How to upload built XPI to Mozilla Add-ons website?
 
 First, you must generate an API key.
 See the entry: https://blog.mozilla.org/addons/2015/11/20/signing-api-now-available/
