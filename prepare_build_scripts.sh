@@ -20,17 +20,17 @@ do
   read -p "Input the name of the package> " name
 done
 
-cat "$tools_dir/APPNAME.bat.in" | \
-  $sed -e "s/%APPNAME%/$name/g" > "$work_dir/$name.bat"
-cat "$tools_dir/APPNAME.sh.in" | \
-  $sed -e "s/%APPNAME%/$name/g" > "$work_dir/$name.sh"
+cat "$tools_dir/make.bat.in" | \
+  $sed -e "s/%APPNAME%/$name/g" > "$work_dir/make.bat"
+cat "$tools_dir/make.sh.in" | \
+  $sed -e "s/%APPNAME%/$name/g" > "$work_dir/make.sh"
 cat "$tools_dir/Makefile.in" | \
   $sed -e "s/%APPNAME%/$name/g" > "$work_dir/Makefile"
 
 if [ -d "$work_dir/.git" ]
 then
-  git add "$name.bat"
-  git add "$name.sh"
+  git add "make.bat"
+  git add "make.sh"
   git add Makefile
-  git commit -m "Add scripts to build XPI package" makexpi "$name.bat" "$name.sh" Makefile
+  git commit -m "Add scripts to build XPI package" makexpi "make.bat" "make.sh" Makefile
 fi
