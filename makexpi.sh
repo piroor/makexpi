@@ -54,6 +54,8 @@
 #          + [locale]
 #          + [skin]
 
+work_dir="$(pwd)"
+tools_dir="$(cd "$(dirname "$0")" && pwd)"
 
 case $(uname) in
   Darwin|*BSD|CYGWIN*)
