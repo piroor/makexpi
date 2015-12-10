@@ -3,5 +3,5 @@
 appname=${0##*/}
 appname=${appname%.sh}
 
-makexpi/makexpi.sh -n $appname
+makexpi/makexpi.sh -n $appname -o
 
