@@ -45,11 +45,11 @@ For example, if you get the result:
  * JWT issuer: `user:xxxxxx:xxx`
  * JWT secret: `yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy`
 
-then set them to environment variables `JWT_KEY` and `JWT_SECRET` and run `make sign`.
+then set them to environment variables `JWT_KEY` and `JWT_SECRET` and run `make signed`.
 
     $ export JWT_KEY=user:xxxxxx:xxx
     $ export JWT_SECRET=yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
-    $ make sign
+    $ make signed
 
 If your XPI package is automatically signed, it will be downloaded to the current directory.
 However, if it requires manual review by AMO editors, you'll have to download it by hand after preliminary or full review.
