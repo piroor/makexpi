@@ -18,8 +18,8 @@ Next, run the script `prepare_build_scripts.sh` as:
 Then you'll get three new files:
 
  * `Makefile`
- * `package-name-of-new-addon.bat`, a batchfile for Windows with Cygwin.
- * `package-name-of-new-addon.sh`, a bash script for Windows with Cygwin.
+ * `make.bat`, a batchfile for Windows with Cygwin.
+ * `make.sh`, a bash script for Windows with Cygwin.
 
 ### How to build?
 
