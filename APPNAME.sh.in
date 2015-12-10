@@ -1,0 +1,4 @@
+#!/bin/sh
+
+makexpi/makexpi.sh -n %APPNAME% -o
+
