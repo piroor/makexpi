@@ -51,5 +51,5 @@ then set them to environment variables `JWT_KEY` and `JWT_SECRET` and run `make 
     $ make sign
 
 If your XPI package is automatically signed, it will be downloaded to the current directory.
-However, if it requires manual review by AMO editors, you'll download it after preliminary or full review by your hand.
+However, if it requires manual review by AMO editors, you'll have to download it by hand after preliminary or full review.
 
