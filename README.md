@@ -4,7 +4,8 @@
 
 ### How to install scripts to build XPI packages?
 
-First, add submodule to the root of the repository for yoru addon, like:
+First, put these tools under the a directory named `makexpi`, at the root of your project.
+If it is a Git repository, you should add this as a submodule, like:
 
     $ git clone git@github.com/piroor/new-addon
     $ cd new-addon
@@ -14,7 +15,7 @@ Next, run the script `prepare_build_scripts.sh` as:
 
     $ makexpi/prepare_build_scripts.sh -n "package-name-of-new-addon"
 
-Then you'll get three new files in your repository:
+Then you'll get three new files:
 
  * `Makefile`
  * `package-name-of-new-addon.bat`, a batchfile for Windows with Cygwin.
