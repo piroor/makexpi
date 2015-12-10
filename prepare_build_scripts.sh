@@ -29,8 +29,8 @@ cat "$tools_dir/Makefile.in" | \
 
 if [ -d "$work_dir/.git" ]
 then
-git add "$name.bat"
-git add "$name.sh"
-git add Makefile
-git commit -m "Add scripts to build XPI package" makexpi "$name.bat" "$name.sh" Makefile
+  git add "$name.bat"
+  git add "$name.sh"
+  git add Makefile
+  git commit -m "Add scripts to build XPI package" makexpi "$name.bat" "$name.sh" Makefile
 fi
