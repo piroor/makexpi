@@ -104,14 +104,14 @@ upload() {
 download 2> /dev/null
 case $? in
   0)
-    upload
+    echo "The version is already signed." 1>&2
+    exit 0
     ;;
   1)
     echo "The version is already uploaded. You must retry downloading after signed." 1>&2
     exit 1
     ;;
   10)
-    echo "The version is already signed." 1>&2
-    exit 0
+    upload
     ;;
 esac
