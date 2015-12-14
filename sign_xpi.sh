@@ -11,6 +11,7 @@
 #          -e : seconds to expire the token
 #
 #          -V : enable debug print
+#          -d : dry run
 #
 # See also: https://blog.mozilla.org/addons/2015/11/20/signing-api-now-available/
 
@@ -21,7 +22,7 @@ case $(uname) in
   *)                   sed="sed -r" ;;
 esac
 
-while getopts t:p:o:k:s:e:V OPT
+while getopts t:p:o:k:s:e:Vd OPT
 do
   case $OPT in
     "t" ) token="$OPTARG" ;;
@@ -31,6 +32,7 @@ do
     "s" ) secret="$OPTARG" ;;
     "e" ) expire="$OPTARG" ;;
     "V" ) debug=1 ;;
+    "d" ) dry_run=1 ;;
   esac
 done
 
@@ -76,12 +78,16 @@ download() {
 }
 
 upload() {
-  response=$(curl "https://addons.mozilla.org/api/v3/addons/$id/versions/$version/" \
+  endpoint="https://addons.mozilla.org/api/v3/addons/$id/versions/$version/"
+  if [ "$debug" = 1 ]; then echo "endpoint: $endpoint"; fi
+
+  if [ "$dry_run" != 1 ]
+  then
+  response=$(curl $endpoint \
                -s \
                -D - \
                -H "Authorization: JWT $token" \
                -g -XPUT --form "upload=@$xpi")
-
   if [ "$debug" = 1 ]; then echo "$response"; fi
 
   if echo "$response" | grep -E '"signed"\s*:\s*true' > /dev/null
@@ -91,6 +97,10 @@ upload() {
   else
     echo "Not signed yet. You must retry downloading after signed." 1>&2
     exit 1
+  fi
+  else
+    echo "The file will be uploaded for signing."
+    exit 0
   fi
 }
 
