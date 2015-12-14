@@ -12,6 +12,7 @@
 #          -e : seconds to expire the token
 #
 #          -V : enable debug print
+#          -d : dry run
 #
 # See also: https://blog.mozilla.org/addons/2015/11/20/signing-api-now-available/
 
@@ -22,7 +23,7 @@ case $(uname) in
   *)                   sed="sed -r" ;;
 esac
 
-while getopts t:i:v:o:k:s:e:V OPT
+while getopts t:i:v:o:k:s:e:Vd OPT
 do
   case $OPT in
     "t" ) token="$OPTARG" ;;
@@ -33,6 +34,7 @@ do
     "s" ) secret="$OPTARG" ;;
     "e" ) expire="$OPTARG" ;;
     "V" ) debug=1 ;;
+    "d" ) dry_run=1 ;;
   esac
 done
 
@@ -49,7 +51,10 @@ fi
 [ "$output" = "" ] && output=.
 output="$(cd "$output" && pwd)"
 
-response=$(curl "https://addons.mozilla.org/api/v3/addons/$id/versions/$version/" \
+endpoint="https://addons.mozilla.org/api/v3/addons/$id/versions/$version/"
+if [ "$debug" = 1 ]; then echo "endpoint: $endpoint"; fi
+
+response=$(curl $endpoint \
              -s \
              -D - \
              -H "Authorization: JWT $token")
@@ -62,6 +67,8 @@ then
           grep "download_url" | \
           $sed -e 's/.*"download_url"\s*:\s*"([^"]+).*/\1/')
   file="$output/$id-$version-signed.xpi"
+  if [ "$dry_run" != 1 ]
+  then
   response=$(curl "$uri" \
                -g \
                -s \
@@ -71,6 +78,9 @@ then
                -H "Authorization: JWT $token")
   if [ "$debug" = 1 ]; then echo "$response"; fi
   echo "Signed XPI is downloaded at: $output/$id-$version-signed.xpi"
+  else
+    echo "Signed XPI will be downloaded at: $output/$id-$version-signed.xpi"
+  fi
   exit 0
 elif echo "$response" | grep -E 'No uploaded file for that addon and version.' > /dev/null
 then
