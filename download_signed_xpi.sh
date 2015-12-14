@@ -57,12 +57,12 @@ then
           grep "download_url" | \
           $sed -e 's/.*"download_url"\s*:\s*"([^"]+).*/\1/')
   file="$output/$id-$version-signed.xpi"
-  curl "$uri" -g \
+  response=$(curl "$uri" -g \
     -s \
     -L \
     -D - \
     -o "$file" \
-    -H "Authorization: JWT $token"
+    -H "Authorization: JWT $token")
   echo "Signed XPI is downloaded at: $output/$id-$version-signed.xpi"
   exit 0
 else
