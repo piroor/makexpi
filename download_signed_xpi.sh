@@ -11,6 +11,8 @@
 #          -s : JWT secret, like "0123456789abcdef..."
 #          -e : seconds to expire the token
 #
+#          -d : enable debug print
+#
 # See also: https://blog.mozilla.org/addons/2015/11/20/signing-api-now-available/
 
 tools_dir=$(cd $(dirname $0) && pwd)
@@ -20,7 +22,7 @@ case $(uname) in
   *)                   sed="sed -r" ;;
 esac
 
-while getopts t:i:v:o:k:s:e: OPT
+while getopts t:i:v:o:k:s:e:d OPT
 do
   case $OPT in
     "t" ) token="$OPTARG" ;;
@@ -30,6 +32,7 @@ do
     "k" ) key="$OPTARG" ;;
     "s" ) secret="$OPTARG" ;;
     "e" ) expire="$OPTARG" ;;
+    "d" ) debug=1 ;;
   esac
 done
 
@@ -51,7 +54,9 @@ response=$(curl "https://addons.mozilla.org/api/v3/addons/$id/versions/$version/
              -D - \
              -H "Authorization: JWT $token")
 
-if echo "$response" | grep -E '"signed"\s*:\s*true'
+if [ "$debug" = 1 ]; then echo "$response"; fi
+
+if echo "$response" | grep -E '"signed"\s*:\s*true' > /dev/null
 then
   uri=$(echo "$response" | \
           grep "download_url" | \
@@ -63,6 +68,7 @@ then
     -D - \
     -o "$file" \
     -H "Authorization: JWT $token")
+  if [ "$debug" = 1 ]; then echo "$response"; fi
   echo "Signed XPI is downloaded at: $output/$id-$version-signed.xpi"
   exit 0
 else
