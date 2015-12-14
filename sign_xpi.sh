@@ -10,6 +10,8 @@
 #          -s : JWT secret, like "0123456789abcdef..."
 #          -e : seconds to expire the token
 #
+#          -d : enable debug print
+#
 # See also: https://blog.mozilla.org/addons/2015/11/20/signing-api-now-available/
 
 tools_dir=$(cd $(dirname $0) && pwd)
@@ -19,7 +21,7 @@ case $(uname) in
   *)                   sed="sed -r" ;;
 esac
 
-while getopts t:p:o:k:s:e: OPT
+while getopts t:p:o:k:s:e:d OPT
 do
   case $OPT in
     "t" ) token="$OPTARG" ;;
@@ -28,6 +30,7 @@ do
     "k" ) key="$OPTARG" ;;
     "s" ) secret="$OPTARG" ;;
     "e" ) expire="$OPTARG" ;;
+    "d" ) debug=1 ;;
   esac
 done
 
@@ -56,17 +59,52 @@ extract_initial_em_value() {
 id=$(extract_initial_em_value id)
 version=$(extract_initial_em_value version)
 
-response=$(curl "https://addons.mozilla.org/api/v3/addons/$id/versions/$version/" \
-             -s \
-             -D - \
-             -H "Authorization: JWT $token" \
-             -g -XPUT --form "upload=@$xpi")
+download() {
+  if [ "$debug" = 1 ]
+  then
+    debug_option=" -d"
+  else
+    debug_option=""
+  fi
+  $tools_dir/download_signed_xpi.sh \
+    -t "$token" \
+    -i "$id" \
+    -v "$version" \
+    -o "$output" \
+    $debug_option
+  return $?
+}
 
-if echo "$response" | grep -E '"signed"\s*:\s*true'
-then
-  $tools_dir/download_signed_xpi.sh -t "$token" -i "$id" -v "$version" -o "$output"
-  exit 0
-else
-  echo "Not signed yet. You must retry downloading after signed." 1>&2
-  exit 1
-fi
+upload() {
+  response=$(curl "https://addons.mozilla.org/api/v3/addons/$id/versions/$version/" \
+               -s \
+               -D - \
+               -H "Authorization: JWT $token" \
+               -g -XPUT --form "upload=@$xpi")
+
+  if [ "$debug" = 1 ]; then echo "$response"; fi
+
+  if echo "$response" | grep -E '"signed"\s*:\s*true' > /dev/null
+  then
+    download
+    exit 0
+  else
+    echo "Not signed yet. You must retry downloading after signed." 1>&2
+    exit 1
+  fi
+}
+
+download
+case $? in
+  0)
+    upload
+    ;;
+  1)
+    echo "The version is already uploaded. You must retry downloading after signed." 1>&2
+    exit 1
+    ;;
+  10)
+    echo "The version is already signed." 1>&2
+    exit 0
+    ;;
+esac
