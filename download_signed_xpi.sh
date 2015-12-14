@@ -69,15 +69,15 @@ then
   file="$output/$id-$version-signed.xpi"
   if [ "$dry_run" != 1 ]
   then
-  response=$(curl "$uri" \
-               -g \
-               -s \
-               -L \
-               -D - \
-               -o "$file" \
-               -H "Authorization: JWT $token")
-  if [ "$debug" = 1 ]; then echo "$response"; fi
-  echo "Signed XPI is downloaded at: $output/$id-$version-signed.xpi"
+    response=$(curl "$uri" \
+                 -g \
+                 -s \
+                 -L \
+                 -D - \
+                 -o "$file" \
+                 -H "Authorization: JWT $token")
+    if [ "$debug" = 1 ]; then echo "$response"; fi
+    echo "Signed XPI is downloaded at: $output/$id-$version-signed.xpi"
   else
     echo "Signed XPI will be downloaded at: $output/$id-$version-signed.xpi"
   fi
