@@ -10,7 +10,7 @@
 #          -s : JWT secret, like "0123456789abcdef..."
 #          -e : seconds to expire the token
 #
-#          -d : enable debug print
+#          -V : enable debug print
 #
 # See also: https://blog.mozilla.org/addons/2015/11/20/signing-api-now-available/
 
@@ -21,7 +21,7 @@ case $(uname) in
   *)                   sed="sed -r" ;;
 esac
 
-while getopts t:p:o:k:s:e:d OPT
+while getopts t:p:o:k:s:e:V OPT
 do
   case $OPT in
     "t" ) token="$OPTARG" ;;
@@ -30,7 +30,7 @@ do
     "k" ) key="$OPTARG" ;;
     "s" ) secret="$OPTARG" ;;
     "e" ) expire="$OPTARG" ;;
-    "d" ) debug=1 ;;
+    "V" ) debug=1 ;;
   esac
 done
 
@@ -62,7 +62,7 @@ version=$(extract_initial_em_value version)
 download() {
   if [ "$debug" = 1 ]
   then
-    debug_option=" -d"
+    debug_option=" -V"
   else
     debug_option=""
   fi
