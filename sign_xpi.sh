@@ -101,7 +101,7 @@ upload() {
   fi
 }
 
-download
+download 2> /dev/null
 case $? in
   0)
     upload
