@@ -72,6 +72,10 @@ then
   if [ "$debug" = 1 ]; then echo "$response"; fi
   echo "Signed XPI is downloaded at: $output/$id-$version-signed.xpi"
   exit 0
+elif echo "$response" | grep -E 'No uploaded file for that addon and version.' > /dev/null
+then
+  echo "Version not found." 1>&2
+  exit 10
 else
   echo "Not signed yet." 1>&2
   exit 1
