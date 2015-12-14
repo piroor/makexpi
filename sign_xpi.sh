@@ -62,18 +62,15 @@ id=$(extract_initial_em_value id)
 version=$(extract_initial_em_value version)
 
 download() {
-  if [ "$debug" = 1 ]
-  then
-    debug_option=" -V"
-  else
-    debug_option=""
-  fi
+  extra_options = ""
+  if [ "$debug" = 1 ]; then extra_options="$extra_options -V"; fi
+  if [ "$dry_run" = 1 ]; then extra_options="$extra_options -d"; fi
   $tools_dir/download_signed_xpi.sh \
     -t "$token" \
     -i "$id" \
     -v "$version" \
     -o "$output" \
-    $debug_option
+    $extra_options
   return $?
 }
 
