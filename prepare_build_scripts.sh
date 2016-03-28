@@ -8,7 +8,7 @@ case $(uname) in
   *)                   sed="sed -r" ;;
 esac
 
-while getopts t:p:o:k:s:e: OPT
+while getopts n: OPT
 do
   case $OPT in
     "n" ) name="$OPTARG" ;;
