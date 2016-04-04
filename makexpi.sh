@@ -124,7 +124,7 @@ fi
 
 if [ "$appname" = '' ]
 then
-  appname=$1
+  appname="$1"
 fi
 if [ "$appname" = '' ]
   # スクリプト名でパッケージ名を明示している場合：
