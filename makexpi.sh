@@ -317,6 +317,7 @@ if [ -d ../meta ]
 then
   rm -f "../meta/${appname}${suffix}.xpi"
   $cp "../${appname}${suffix}${version_part}.xpi" "../meta/${appname}${suffix}.xpi"
+  echo "meta package built."
 fi
 
 # end
