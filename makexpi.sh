@@ -190,6 +190,7 @@ mkdir -p xpi_temp
 xpi_contents_files='*.js *.rdf chrome.manifest *.inf *.cfg *.light icon*.png'
 xpi_contents_dirs='chrome modules isp defaults license platform'
 xpi_contents_files_in_subdirs='components/*.js components/*.xpt components/*/*.xpt'
+exclude_options=" -x '*/.svn/*'"
 
 xpi_contents=''
 for target in $xpi_contents_files $xpi_contents_dirs $xpi_contents_files
@@ -219,7 +220,7 @@ pack_to_jar() {
   then
     local jarfile="chrome/$appname.jar"
     mkdir -p chrome
-    zip -r -0 "$jarfile" $jar_contents -x \*/.svn/\*
+    zip -r -0 "$jarfile" $jar_contents $exclude_options
     chmod 644 "$jarfile"
   fi
   rm -rf content
@@ -285,7 +286,11 @@ fi
 
 #create xpi (Japanese)
 $cp install.rdf.base install.rdf
-zip -r -$xpi_compression_level "../$appname${version_part}${suffix}.xpi" $xpi_contents -x \*/.svn/\* || exit 1
+zip -r -$xpi_compression_level \
+  "../$appname${version_part}${suffix}.xpi" \
+  $xpi_contents \
+  $exclude_options \
+  > /dev/null || exit 1
 
 #create xpi without update info (Japanese)
 rm -f install.rdf
@@ -293,14 +298,20 @@ cat install.rdf.base \
   | $esed -e "s#^.*<em:(updateURL|updateKey)>.*</em:(updateURL|updateKey)>##g" \
           -e "s#^.*em:(updateURL|updateKey)=(\".*\"|'.*')##g" \
   > install.rdf
-zip -r -$xpi_compression_level "../${appname}${version_part}${suffix}_noupdate.xpi" $xpi_contents -x \*/.svn/\* || exit 1
+zip -r -$xpi_compression_level \
+  "../${appname}${version_part}${suffix}_noupdate.xpi" \
+  $xpi_contents \
+  $exclude_options \
+  > /dev/null || exit 1
 
 
 
 # create lzh
 if [ -f ../readme.txt ]
 then
-  lha a "../$appname${version_part}.lzh" "../${appname}${suffix}.xpi" ../readme.txt
+  lha a "../$appname${version_part}.lzh" \
+    "../${appname}${suffix}.xpi" \
+    ../readme.txt
 fi
 
 
@@ -314,14 +325,22 @@ then
   $cp ../en.inf ./locale.inf
   $cp "../options.$appname.en.inf" ./options.inf
   chmod 644 *.inf
-  zip -r -$xpi_compression_level "../${appname}${suffix}${version_part}_en.xpi" $xpi_contents -x \*/.svn/\* || exit 1
+  zip -r -$xpi_compression_level \
+    "../${appname}${suffix}${version_part}_en.xpi" \
+    $xpi_contents \
+    $exclude_options \
+    > /dev/null || exit 1
 
   rm -f install.rdf
   $esed -e "s#^.*<em:*\(updateURL\|updateKey\)>.*</em:*\(updateURL\|updateKey\)>##g" \
         -e "s#^.*em:*\(updateURL\|updateKey\)=\(\".*\"\|'.*'\)##g" \
         ../install.rdf \
     > install.rdf
-  zip -r -$xpi_compression_level "../${appname}${suffix}${version_part}_noupdate_en.xpi" $xpi_contents -x \*/.svn/\* || exit 1
+  zip -r -$xpi_compression_level \
+    "../${appname}${suffix}${version_part}_noupdate_en.xpi" \
+    $xpi_contents \
+    $exclude_options \
+    > /dev/null || exit 1
 fi
 
 
