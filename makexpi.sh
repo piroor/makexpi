@@ -209,7 +209,25 @@ do
   fi
 done
 
+
+create_jar() {
+  local jar_contents=''
+  [ -d content ] && jar_contents="$jar_contents content"
+  [ -d locale ]  && jar_contents="$jar_contents locale"
+  [ -d skin ]    && jar_contents="$jar_contents skin"
+  if [ "$jar_contents" != '' ]
+  then
+    mkdir -p chrome
+    zip -r -0 "chrome/$appname.jar" $jar_contents -x \*/.svn/\*
+  fi
+  rm -rf content
+  rm -rf locale
+  rm -rf skin
+}
+
 cd xpi_temp
+
+# override min and max versions
 mv install.rdf ./install.rdf.base
 if [ "$min_version" != "0" ]
 then
@@ -229,48 +247,30 @@ then
   rm install.rdf.base
   mv install.rdf ./install.rdf.base
 fi
-cd ..
 
 # pack platform related resources
 if [ -d ./platform ]
 then
-  $cp -r platform ./xpi_temp/
-  cd xpi_temp/platform
+  rm ./platform/components/*.idl
 
-  rm components/*.idl
-
-    if [ "$nojar" = "0" ]
-    then
-    for dirname in *
+  if [ "$nojar" = '0' ]
+  then
+    for platform_target in ./platform/*
     do
-      if [ -d $dirname/content -o -d $dirname/skin -o -d $dirname/locale ]
+      if [ -d "$platform_target" ]
       then
-        cd $dirname
-        mkdir -p chrome
-        zip -r -0 chrome/$appname.jar content locale skin -x \*/.svn/\*
-        rm -r -f content
-        rm -r -f locale
-        rm -r -f skin
+        (cd "$platform_target"; create_jar)
       fi
     done
   fi
-  cd ../..
 fi
 
-
-cd xpi_temp
 chmod -R 644 *.*
 
 
-if [ "$nojar" = "0" ]
+if [ "$nojar" = '0' ]
 then
-  # create jar
-  mkdir -p chrome
-  zip -r -0 ./chrome/$appname.jar content locale skin -x \*/.svn/\*
-  if [ ! -f ./chrome/$appname.jar ]
-  then
-    rm -r -f chrome
-  fi
+  create_jar
 else
   xpi_contents="content locale skin$xpi_contents"
 fi
