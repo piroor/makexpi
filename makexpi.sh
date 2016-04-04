@@ -162,10 +162,6 @@ then
 fi
 
 
-xpi_contents="chrome components/*.js components/*.xpt components/*/*.xpt modules isp defaults license platform *.js *.rdf chrome.manifest *.inf *.cfg *.light icon*.png"
-
-
-
 rm -rf xpi_temp
 rm -f "${appname}${suffix}.xpi"
 rm -f "${appname}${suffix}_en.xpi"
@@ -182,13 +178,27 @@ rm -f "${appname}${suffix}-*.lzh"
 # create temp files
 mkdir -p xpi_temp
 
-for f in ${xpi_contents}; do
-  $cp -rp --parents ${f} xpi_temp/
+xpi_contents_files='*.js *.rdf chrome.manifest *.inf *.cfg *.light icon*.png'
+xpi_contents_dirs='chrome modules isp defaults license platform'
+xpi_contents_files_in_subdirs='components/*.js components/*.xpt components/*/*.xpt'
+
+xpi_contents=''
+for target in $xpi_contents_files $xpi_contents_dirs $xpi_contents_files
+do
+  if [ -f "$target" -o -d "$target" ]
+  then
+    $cp -rp --parents ${target} xpi_temp/
+    xpi_contents="$xpi_contents $target"
+  fi
 done
 
-$cp -r content ./xpi_temp/
-$cp -r locale ./xpi_temp/
-$cp -r skin ./xpi_temp/
+for target in content locale skin
+do
+  if [ -d "./$target" ]
+  then
+    $cp -r "./$target" ./xpi_temp/
+  fi
+done
 
 cd xpi_temp
 mv install.rdf ./install.rdf.base
@@ -253,7 +263,7 @@ then
     rm -r -f chrome
   fi
 else
-  xpi_contents="content locale skin $xpi_contents"
+  xpi_contents="content locale skin$xpi_contents"
 fi
 
 
