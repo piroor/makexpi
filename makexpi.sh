@@ -210,20 +210,23 @@ do
 done
 
 
-create_jar() {
+pack_to_jar() {
   local jar_contents=''
   [ -d content ] && jar_contents="$jar_contents content"
   [ -d locale ]  && jar_contents="$jar_contents locale"
   [ -d skin ]    && jar_contents="$jar_contents skin"
   if [ "$jar_contents" != '' ]
   then
+    local jarfile="chrome/$appname.jar"
     mkdir -p chrome
-    zip -r -0 "chrome/$appname.jar" $jar_contents -x \*/.svn/\*
+    zip -r -0 "$jarfile" $jar_contents -x \*/.svn/\*
+    chmod 644 "$jarfile"
   fi
   rm -rf content
   rm -rf locale
   rm -rf skin
 }
+
 
 cd xpi_temp
 
@@ -248,6 +251,16 @@ then
   mv install.rdf ./install.rdf.base
 fi
 
+# include files for very old style xpi
+if [ -f ./install.js ]
+then
+  $cp ../ja.inf ./locale.inf
+  $cp "../options.$appname.ja.inf" ./options.inf
+  chmod 644 *.inf
+fi
+
+chmod -R 644 *.*
+
 # pack platform related resources
 if [ -d ./platform ]
 then
@@ -259,28 +272,17 @@ then
     do
       if [ -d "$platform_target" ]
       then
-        (cd "$platform_target"; create_jar)
+        (cd "$platform_target"; pack_to_jar)
       fi
     done
   fi
 fi
 
-chmod -R 644 *.*
-
-
 if [ "$nojar" = '0' ]
 then
-  create_jar
+  pack_to_jar
 else
   xpi_contents="content locale skin$xpi_contents"
-fi
-
-
-if [ -f ./install.js ]
-then
-  $cp ../ja.inf ./locale.inf
-  $cp ../options.$appname.ja.inf ./options.inf
-  chmod 644 *.inf
 fi
 
 
