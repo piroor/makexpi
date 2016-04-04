@@ -59,7 +59,7 @@ tools_dir="$(cd "$(dirname "$0")" && pwd)"
 
 case $(uname) in
   Darwin|*BSD|CYGWIN*)
-    sed="sed -E"
+    esed="sed -E"
     if gcp --version && gcp --version | grep GNU
     then
       cp="gcp"
@@ -74,7 +74,7 @@ case $(uname) in
     fi
     ;;
   *)
-    sed="sed -r"
+    esed="sed -r"
     cp="cp"
     sha1sum="sha1sum"
     ;;
@@ -125,18 +125,18 @@ fi
 
 if [ "$use_version" = '' ]
 then
-	use_version=`echo "$2" | $sed -e 's#version=(1|yes|true)#1#ig'`
+	use_version=`echo "$2" | $esed -e 's#version=(1|yes|true)#1#ig'`
 fi
 
 
 version=$(grep 'em:version=' install.rdf | \
-            $sed -e 's#em:version=##g' | \
-            $sed -e 's#[ \t\r\n"]##g')
+            $esed -e 's#em:version=##g' | \
+            $esed -e 's#[ \t\r\n"]##g')
 if [ "$version" = '' ]
 then
 	version=$(grep '<em:version>' install.rdf | \
-	            $sed -e 's#</?em:version>##g' | \
-	            $sed -e 's#[ \t\r\n"]##g')
+	            $esed -e 's#</?em:version>##g' | \
+	            $esed -e 's#[ \t\r\n"]##g')
 fi
 if [ "$version" != '' ]
 then
@@ -177,7 +177,7 @@ mv install.rdf ./install.rdf.base
 if [ "$min_version" != "0" ]
 then
   cat install.rdf.base \
-    | $sed -e "s#<em:minVersion>.*</em:minVersion>#<em:minVersion>${min_version}</em:minVersion>#g" \
+    | $esed -e "s#<em:minVersion>.*</em:minVersion>#<em:minVersion>${min_version}</em:minVersion>#g" \
            -e "s#em:minVersion=\(\".*\"\|'.*'\)#em:minVersion=\"${min_version}\"#g" \
     > install.rdf
   rm install.rdf.base
@@ -186,7 +186,7 @@ fi
 if [ "$max_version" != "0" ]
 then
   cat install.rdf.base \
-    | $sed -e "s#<em:maxVersion>.*</em:maxVersion>#<em:maxVersion>${max_version}</em:maxVersion>#g" \
+    | $esed -e "s#<em:maxVersion>.*</em:maxVersion>#<em:maxVersion>${max_version}</em:maxVersion>#g" \
            -e "s#em:maxVersion=\(\".*\"\|'.*'\)#em:maxVersion=\"${max_version}\"#g" \
     > install.rdf
   rm install.rdf.base
@@ -254,7 +254,7 @@ zip -r -$xpi_compression_level ../$appname${version_part}${suffix}.xpi $xpi_cont
 #create xpi without update info (Japanese)
 rm -f install.rdf
 cat install.rdf.base \
-  | $sed -e "s#^.*<em:(updateURL|updateKey)>.*</em:(updateURL|updateKey)>##g" \
+  | $esed -e "s#^.*<em:(updateURL|updateKey)>.*</em:(updateURL|updateKey)>##g" \
          -e "s#^.*em:(updateURL|updateKey)=(\".*\"|'.*')##g" \
   > install.rdf
 
@@ -282,7 +282,7 @@ then
 	zip -r -$xpi_compression_level ../${appname}${suffix}${version_part}_en.xpi $xpi_contents -x \*/.svn/\* || exit 1
 
 	rm -f install.rdf
-	$sed -e "s#^.*<em:*\(updateURL\|updateKey\)>.*</em:*\(updateURL\|updateKey\)>##g" -e "s#^.*em:*\(updateURL\|updateKey\)=\(\".*\"\|'.*'\)##g" ../install.rdf > install.rdf
+	$esed -e "s#^.*<em:*\(updateURL\|updateKey\)>.*</em:*\(updateURL\|updateKey\)>##g" -e "s#^.*em:*\(updateURL\|updateKey\)=\(\".*\"\|'.*'\)##g" ../install.rdf > install.rdf
 	zip -r -$xpi_compression_level ../${appname}${suffix}${version_part}_noupdate_en.xpi $xpi_contents -x \*/.svn/\* || exit 1
 fi
 
