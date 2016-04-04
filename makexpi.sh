@@ -314,18 +314,18 @@ pack_to_xpi() {
 #create XPI (Japanese)
 if [ -f install.rdf.base ]
 then
-$cp install.rdf.base install.rdf
+  $cp install.rdf.base install.rdf
 fi
 pack_to_xpi "$appname${version_part}${suffix}.xpi"
 
 #create XPI without update info (Japanese)
 if [ -f install.rdf.base ]
 then
-rm -f install.rdf
-cat install.rdf.base \
-  | $esed -e "s#^.*<em:(updateURL|updateKey)>.*</em:(updateURL|updateKey)>##g" \
-          -e "s#^.*em:(updateURL|updateKey)=(\".*\"|'.*')##g" \
-  > install.rdf
+  rm -f install.rdf
+  cat install.rdf.base \
+    | $esed -e "s#^.*<em:(updateURL|updateKey)>.*</em:(updateURL|updateKey)>##g" \
+            -e "s#^.*em:(updateURL|updateKey)=(\".*\"|'.*')##g" \
+    > install.rdf
 fi
 pack_to_xpi "$appname${version_part}${suffix}_noupdate.xpi"
 
