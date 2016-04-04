@@ -166,17 +166,17 @@ xpi_contents="chrome components/*.js components/*.xpt components/*/*.xpt modules
 
 
 
-rm -r -f xpi_temp
-rm -f ${appname}${suffix}.xpi
-rm -f ${appname}${suffix}_en.xpi
-rm -f ${appname}${suffix}_noupdate.xpi
-rm -f ${appname}${suffix}_noupdate_en.xpi
-rm -f ${appname}${suffix}.lzh
-rm -f ${appname}${suffix}-*.xpi
-rm -f ${appname}${suffix}-*_en.xpi
-rm -f ${appname}${suffix}-*_noupdate.xpi
-rm -f ${appname}${suffix}-*_noupdate_en.xpi
-rm -f ${appname}${suffix}-*.lzh
+rm -rf xpi_temp
+rm -f "${appname}${suffix}.xpi"
+rm -f "${appname}${suffix}_en.xpi"
+rm -f "${appname}${suffix}_noupdate.xpi"
+rm -f "${appname}${suffix}_noupdate_en.xpi"
+rm -f "${appname}${suffix}.lzh"
+rm -f "${appname}${suffix}-*.xpi"
+rm -f "${appname}${suffix}-*_en.xpi"
+rm -f "${appname}${suffix}-*_noupdate.xpi"
+rm -f "${appname}${suffix}-*_noupdate_en.xpi"
+rm -f "${appname}${suffix}-*.lzh"
 
 
 # create temp files
