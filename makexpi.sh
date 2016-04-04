@@ -119,6 +119,12 @@ do
   esac
 done
 
+if [ -f 'manifest.json' ]
+then
+  nojar=1
+  xpi_compression_level=0
+fi
+
 if [ "$suffix" != '' ]
 then
   suffix=-$suffix
@@ -193,13 +199,14 @@ echo 'preparing contents...'
 
 mkdir -p xpi_temp
 
+webextensions_files='_locales icons options scripts manifest.json'
 xpi_contents_files='*.js *.rdf chrome.manifest *.inf *.cfg *.light icon*.png'
 xpi_contents_dirs='chrome modules isp defaults license platform'
 xpi_contents_files_in_subdirs='components/*.js components/*.xpt components/*/*.xpt'
 exclude_options=" -x '*/.svn/*'"
 
 xpi_contents=''
-for target in $xpi_contents_files $xpi_contents_dirs $xpi_contents_files
+for target in $webextensions_files $xpi_contents_files $xpi_contents_dirs $xpi_contents_files
 do
   if [ -f "$target" -o -d "$target" ]
   then
@@ -243,6 +250,11 @@ echo 'building XPIs...'
 
 cd xpi_temp
 
+if [ -f 'manifest.json' ]
+then
+  : # for WebExtensions
+else
+  # legacy addons
 mv install.rdf ./install.rdf.base
 
 # override min and max versions
@@ -260,7 +272,7 @@ then
         -i \
         install.rdf.base
 fi
-
+fi
 
 chmod -R 644 *.*
 
@@ -300,15 +312,21 @@ pack_to_xpi() {
 }
 
 #create XPI (Japanese)
+if [ -f install.rdf.base ]
+then
 $cp install.rdf.base install.rdf
+fi
 pack_to_xpi "$appname${version_part}${suffix}.xpi"
 
 #create XPI without update info (Japanese)
+if [ -f install.rdf.base ]
+then
 rm -f install.rdf
 cat install.rdf.base \
   | $esed -e "s#^.*<em:(updateURL|updateKey)>.*</em:(updateURL|updateKey)>##g" \
           -e "s#^.*em:(updateURL|updateKey)=(\".*\"|'.*')##g" \
   > install.rdf
+fi
 pack_to_xpi "$appname${version_part}${suffix}_noupdate.xpi"
 
 
