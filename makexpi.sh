@@ -57,6 +57,7 @@
 
 #=================================================================
 # initialize
+echo 'initializing...'
 
 work_dir="$(pwd)"
 tools_dir="$(cd "$(dirname "$0")" && pwd)"
@@ -165,10 +166,13 @@ then
   fi
 fi
 
+echo "building XPI for $appname $version..."
+
 
 #=================================================================
 # clear old files
 
+echo 'clearing old files...'
 rm -rf xpi_temp
 rm -f "${appname}${suffix}.xpi"
 rm -f "${appname}${suffix}_en.xpi"
@@ -183,7 +187,9 @@ rm -f "${appname}${suffix}-*.lzh"
 
 
 #=================================================================
-# prepare xpi contents
+# prepare XPI contents
+
+echo 'preparing contents...'
 
 mkdir -p xpi_temp
 
@@ -212,6 +218,7 @@ done
 
 
 pack_to_jar() {
+  echo "packing contents of \"$(pwd)\" to a jar file..."
   local jar_contents=''
   [ -d content ] && jar_contents="$jar_contents content"
   [ -d locale ]  && jar_contents="$jar_contents locale"
@@ -228,6 +235,11 @@ pack_to_jar() {
   rm -rf skin
 }
 
+
+#=================================================================
+# build XPIs
+
+echo 'building XPIs...'
 
 cd xpi_temp
 
@@ -249,7 +261,7 @@ then
         install.rdf.base
 fi
 
-# include files for very old style xpi
+# include files for very old style XPI
 if [ -f ./install.js ]
 then
   $cp ../ja.inf ./locale.inf
@@ -284,25 +296,27 @@ else
 fi
 
 
-#create xpi (Japanese)
-$cp install.rdf.base install.rdf
-zip -r -$xpi_compression_level \
-  "../$appname${version_part}${suffix}.xpi" \
-  $xpi_contents \
-  $exclude_options \
-  > /dev/null || exit 1
+pack_to_xpi() {
+  local filename="$1"
+  zip -r -$xpi_compression_level \
+    "../$filename" \
+    $xpi_contents \
+    $exclude_options \
+    > /dev/null || exit 1
+  echo "$filename built."
+}
 
-#create xpi without update info (Japanese)
+#create XPI (Japanese)
+$cp install.rdf.base install.rdf
+pack_to_XPI "$appname${version_part}${suffix}.xpi"
+
+#create XPI without update info (Japanese)
 rm -f install.rdf
 cat install.rdf.base \
   | $esed -e "s#^.*<em:(updateURL|updateKey)>.*</em:(updateURL|updateKey)>##g" \
           -e "s#^.*em:(updateURL|updateKey)=(\".*\"|'.*')##g" \
   > install.rdf
-zip -r -$xpi_compression_level \
-  "../${appname}${version_part}${suffix}_noupdate.xpi" \
-  $xpi_contents \
-  $exclude_options \
-  > /dev/null || exit 1
+pack_to_xpi "$appname${version_part}${suffix}_noupdate.xpi"
 
 
 
@@ -315,7 +329,7 @@ then
 fi
 
 
-#create old style xpi (English)
+#create old style XPI (English)
 if [ -f ./install.js ]
 then
   rm -f install.rdf
@@ -325,22 +339,14 @@ then
   $cp ../en.inf ./locale.inf
   $cp "../options.$appname.en.inf" ./options.inf
   chmod 644 *.inf
-  zip -r -$xpi_compression_level \
-    "../${appname}${suffix}${version_part}_en.xpi" \
-    $xpi_contents \
-    $exclude_options \
-    > /dev/null || exit 1
+  pack_to_xpi "${appname}${suffix}${version_part}_en.xpi"
 
   rm -f install.rdf
   $esed -e "s#^.*<em:*\(updateURL\|updateKey\)>.*</em:*\(updateURL\|updateKey\)>##g" \
         -e "s#^.*em:*\(updateURL\|updateKey\)=\(\".*\"\|'.*'\)##g" \
         ../install.rdf \
     > install.rdf
-  zip -r -$xpi_compression_level \
-    "../${appname}${suffix}${version_part}_noupdate_en.xpi" \
-    $xpi_contents \
-    $exclude_options \
-    > /dev/null || exit 1
+  pack_to_xpi "${appname}${suffix}${version_part}_noupdate_en.xpi"
 fi
 
 
