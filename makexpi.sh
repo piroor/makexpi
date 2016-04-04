@@ -230,25 +230,22 @@ pack_to_jar() {
 
 cd xpi_temp
 
-# override min and max versions
 mv install.rdf ./install.rdf.base
+
+# override min and max versions
 if [ "$min_version" != "0" ]
 then
-  cat install.rdf.base \
-    | $esed -e "s#<em:minVersion>.*</em:minVersion>#<em:minVersion>${min_version}</em:minVersion>#g" \
-           -e "s#em:minVersion=\(\".*\"\|'.*'\)#em:minVersion=\"${min_version}\"#g" \
-    > install.rdf
-  rm install.rdf.base
-  mv install.rdf ./install.rdf.base
+  $esed -e "s#<em:minVersion>.*</em:minVersion>#<em:minVersion>${min_version}</em:minVersion>#g" \
+        -e "s#em:minVersion=\(\".*\"\|'.*'\)#em:minVersion=\"${min_version}\"#g" \
+        -i \
+        install.rdf.base
 fi
 if [ "$max_version" != "0" ]
 then
-  cat install.rdf.base \
-    | $esed -e "s#<em:maxVersion>.*</em:maxVersion>#<em:maxVersion>${max_version}</em:maxVersion>#g" \
-           -e "s#em:maxVersion=\(\".*\"\|'.*'\)#em:maxVersion=\"${max_version}\"#g" \
-    > install.rdf
-  rm install.rdf.base
-  mv install.rdf ./install.rdf.base
+  $esed -e "s#<em:maxVersion>.*</em:maxVersion>#<em:maxVersion>${max_version}</em:maxVersion>#g" \
+        -e "s#em:maxVersion=\(\".*\"\|'.*'\)#em:maxVersion=\"${max_version}\"#g" \
+        -i \
+        install.rdf.base
 fi
 
 # include files for very old style xpi
