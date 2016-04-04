@@ -155,7 +155,10 @@ then
 fi
 if [ "$version" != '' ]
 then
-  if [ "$use_version" = '1' ]; then version_part="-$version"; fi;
+  if [ "$use_version" = '1' ]
+  then
+    version_part="-$version"
+  fi
 fi
 
 
