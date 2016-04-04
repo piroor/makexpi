@@ -301,7 +301,7 @@ pack_to_xpi() {
 
 #create XPI (Japanese)
 $cp install.rdf.base install.rdf
-pack_to_XPI "$appname${version_part}${suffix}.xpi"
+pack_to_xpi "$appname${version_part}${suffix}.xpi"
 
 #create XPI without update info (Japanese)
 rm -f install.rdf
