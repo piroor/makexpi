@@ -291,21 +291,20 @@ zip -r -$xpi_compression_level "../$appname${version_part}${suffix}.xpi" $xpi_co
 rm -f install.rdf
 cat install.rdf.base \
   | $esed -e "s#^.*<em:(updateURL|updateKey)>.*</em:(updateURL|updateKey)>##g" \
-         -e "s#^.*em:(updateURL|updateKey)=(\".*\"|'.*')##g" \
+          -e "s#^.*em:(updateURL|updateKey)=(\".*\"|'.*')##g" \
   > install.rdf
-
-zip -r -$xpi_compression_level ../${appname}${version_part}${suffix}_noupdate.xpi $xpi_contents -x \*/.svn/\* || exit 1
+zip -r -$xpi_compression_level "../${appname}${version_part}${suffix}_noupdate.xpi" $xpi_contents -x \*/.svn/\* || exit 1
 
 
 
 # create lzh
 if [ -f ../readme.txt ]
 then
-  lha a ../$appname${version_part}.lzh ../${appname}${suffix}.xpi ../readme.txt
+  lha a "../$appname${version_part}.lzh" "../${appname}${suffix}.xpi" ../readme.txt
 fi
 
 
-#create xpi (English)
+#create old style xpi (English)
 if [ -f ./install.js ]
 then
   rm -f install.rdf
@@ -313,13 +312,16 @@ then
   rm -f options.inf
   $cp ../install.rdf ./install.rdf
   $cp ../en.inf ./locale.inf
-  $cp ../options.$appname.en.inf ./options.inf
+  $cp "../options.$appname.en.inf" ./options.inf
   chmod 644 *.inf
-  zip -r -$xpi_compression_level ../${appname}${suffix}${version_part}_en.xpi $xpi_contents -x \*/.svn/\* || exit 1
+  zip -r -$xpi_compression_level "../${appname}${suffix}${version_part}_en.xpi" $xpi_contents -x \*/.svn/\* || exit 1
 
   rm -f install.rdf
-  $esed -e "s#^.*<em:*\(updateURL\|updateKey\)>.*</em:*\(updateURL\|updateKey\)>##g" -e "s#^.*em:*\(updateURL\|updateKey\)=\(\".*\"\|'.*'\)##g" ../install.rdf > install.rdf
-  zip -r -$xpi_compression_level ../${appname}${suffix}${version_part}_noupdate_en.xpi $xpi_contents -x \*/.svn/\* || exit 1
+  $esed -e "s#^.*<em:*\(updateURL\|updateKey\)>.*</em:*\(updateURL\|updateKey\)>##g" \
+        -e "s#^.*em:*\(updateURL\|updateKey\)=\(\".*\"\|'.*'\)##g" \
+        ../install.rdf \
+    > install.rdf
+  zip -r -$xpi_compression_level "../${appname}${suffix}${version_part}_noupdate_en.xpi" $xpi_contents -x \*/.svn/\* || exit 1
 fi
 
 
@@ -327,8 +329,8 @@ fi
 #create meta package
 if [ -d ../meta ]
 then
-  rm -f ../meta/${appname}${suffix}.xpi
-  $cp ../${appname}${suffix}${version_part}.xpi ../meta/${appname}${suffix}.xpi
+  rm -f "../meta/${appname}${suffix}.xpi"
+  $cp "../${appname}${suffix}${version_part}.xpi" "../meta/${appname}${suffix}.xpi"
 fi
 
 # end
