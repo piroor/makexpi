@@ -54,6 +54,10 @@
 #          + [locale]
 #          + [skin]
 
+
+#=================================================================
+# initialize
+
 work_dir="$(pwd)"
 tools_dir="$(cd "$(dirname "$0")" && pwd)"
 
@@ -162,6 +166,9 @@ then
 fi
 
 
+#=================================================================
+# clear old files
+
 rm -rf xpi_temp
 rm -f "${appname}${suffix}.xpi"
 rm -f "${appname}${suffix}_en.xpi"
@@ -175,7 +182,9 @@ rm -f "${appname}${suffix}-*_noupdate_en.xpi"
 rm -f "${appname}${suffix}-*.lzh"
 
 
-# create temp files
+#=================================================================
+# prepare xpi contents
+
 mkdir -p xpi_temp
 
 xpi_contents_files='*.js *.rdf chrome.manifest *.inf *.cfg *.light icon*.png'
