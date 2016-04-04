@@ -200,13 +200,13 @@ echo 'preparing contents...'
 mkdir -p xpi_temp
 
 webextensions_files='_locales icons options scripts manifest.json'
-xpi_contents_files='*.js *.rdf chrome.manifest *.inf *.cfg *.light icon*.png'
-xpi_contents_dirs='chrome modules isp defaults license platform'
-xpi_contents_files_in_subdirs='components/*.js components/*.xpt components/*/*.xpt'
+legacy_files='*.js *.rdf chrome.manifest *.inf *.cfg *.light icon*.png'
+legacy_dirs='chrome modules isp defaults license platform'
+legacy_files_in_subdirs='components/*.js components/*.xpt components/*/*.xpt'
 exclude_options=" -x '*/.svn/*'"
 
 xpi_contents=''
-for target in $webextensions_files $xpi_contents_files $xpi_contents_dirs $xpi_contents_files
+for target in $webextensions_files $legacy_files $legacy_dirs $legacy_files_in_subdirs
 do
   if [ -f "$target" -o -d "$target" ]
   then
