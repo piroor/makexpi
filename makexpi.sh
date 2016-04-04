@@ -326,8 +326,8 @@ then
     | $esed -e "s#^.*<em:(updateURL|updateKey)>.*</em:(updateURL|updateKey)>##g" \
             -e "s#^.*em:(updateURL|updateKey)=(\".*\"|'.*')##g" \
     > install.rdf
+  pack_to_xpi "$appname${version_part}${suffix}_noupdate.xpi"
 fi
-pack_to_xpi "$appname${version_part}${suffix}_noupdate.xpi"
 
 
 #create meta package
