@@ -261,13 +261,6 @@ then
         install.rdf.base
 fi
 
-# include files for very old style XPI
-if [ -f ./install.js ]
-then
-  $cp ../ja.inf ./locale.inf
-  $cp "../options.$appname.ja.inf" ./options.inf
-  chmod 644 *.inf
-fi
 
 chmod -R 644 *.*
 
@@ -317,38 +310,6 @@ cat install.rdf.base \
           -e "s#^.*em:(updateURL|updateKey)=(\".*\"|'.*')##g" \
   > install.rdf
 pack_to_xpi "$appname${version_part}${suffix}_noupdate.xpi"
-
-
-
-# create lzh
-if [ -f ../readme.txt ]
-then
-  lha a "../$appname${version_part}.lzh" \
-    "../${appname}${suffix}.xpi" \
-    ../readme.txt
-fi
-
-
-#create old style XPI (English)
-if [ -f ./install.js ]
-then
-  rm -f install.rdf
-  rm -f locale.inf
-  rm -f options.inf
-  $cp ../install.rdf ./install.rdf
-  $cp ../en.inf ./locale.inf
-  $cp "../options.$appname.en.inf" ./options.inf
-  chmod 644 *.inf
-  pack_to_xpi "${appname}${suffix}${version_part}_en.xpi"
-
-  rm -f install.rdf
-  $esed -e "s#^.*<em:*\(updateURL\|updateKey\)>.*</em:*\(updateURL\|updateKey\)>##g" \
-        -e "s#^.*em:*\(updateURL\|updateKey\)=\(\".*\"\|'.*'\)##g" \
-        ../install.rdf \
-    > install.rdf
-  pack_to_xpi "${appname}${suffix}${version_part}_noupdate_en.xpi"
-fi
-
 
 
 #create meta package
