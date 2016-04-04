@@ -155,6 +155,10 @@ then
 fi
 
 
+if [ -f manifest.json ]
+then
+  version=$(cat manifest.json | jq -r .version)
+else
 version=$(grep 'em:version=' install.rdf | \
             $esed -e 's#em:version=##g' | \
             $esed -e 's#[ \t\r\n"]##g')
@@ -163,6 +167,7 @@ then
   version=$(grep '<em:version>' install.rdf | \
               $esed -e 's#</?em:version>##g' | \
               $esed -e 's#[ \t\r\n"]##g')
+fi
 fi
 if [ "$version" != '' ]
 then
