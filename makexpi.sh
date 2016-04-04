@@ -89,13 +89,28 @@ max_version=0
 while getopts fm:n:os:vx: OPT
 do
   case $OPT in
-    "f" ) nojar=1 ;;
-    "m" ) min_version="$OPTARG" ;;
-    "n" ) appname="$OPTARG" ;;
-    "o" ) nojar=1; xpi_compression_level=0 ;;
-    "s" ) suffix="$OPTARG" ;;
-    "v" ) use_version=1 ;;
-    "x" ) max_version="$OPTARG" ;;
+    "f" )
+      nojar=1
+      ;;
+    "m" )
+      min_version="$OPTARG"
+      ;;
+    "n" )
+      appname="$OPTARG"
+      ;;
+    "o" )
+      nojar=1;
+      xpi_compression_level=0
+      ;;
+    "s" )
+      suffix="$OPTARG"
+      ;;
+    "v" )
+      use_version=1
+      ;;
+    "x" )
+      max_version="$OPTARG"
+      ;;
   esac
 done
 
