@@ -140,7 +140,7 @@ fi
 
 if [ "$use_version" = '' ]
 then
-  use_version=`echo "$2" | $esed -e 's#version=(1|yes|true)#1#ig'`
+  use_version="$(echo "$2" | $esed -e 's#version=(1|yes|true)#1#ig')"
 fi
 
 
