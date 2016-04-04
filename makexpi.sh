@@ -116,7 +116,7 @@ done
 
 if [ "$suffix" != '' ]
 then
-	suffix=-$suffix
+  suffix=-$suffix
 fi
 
 
@@ -124,23 +124,23 @@ fi
 
 if [ "$appname" = '' ]
 then
-	appname=$1
+  appname=$1
 fi
 if [ "$appname" = '' ]
-	# スクリプト名でパッケージ名を明示している場合：
-	# スクリプトがパッケージ用のファイル群と一緒に置かれている事を前提に動作
-#	cd "${0%/*}"
+  # スクリプト名でパッケージ名を明示している場合：
+  # スクリプトがパッケージ用のファイル群と一緒に置かれている事を前提に動作
+#  cd "${0%/*}"
 then
-	# 引数でパッケージ名を明示している場合：
-	# スクリプトがパッケージ用のファイル群のあるディレクトリで実行されていることを前提に動作
-	appname="${0##*/}"
-	appname="${appname%.sh}"
-	appname="${appname%_test}"
+  # 引数でパッケージ名を明示している場合：
+  # スクリプトがパッケージ用のファイル群のあるディレクトリで実行されていることを前提に動作
+  appname="${0##*/}"
+  appname="${appname%.sh}"
+  appname="${appname%_test}"
 fi
 
 if [ "$use_version" = '' ]
 then
-	use_version=`echo "$2" | $esed -e 's#version=(1|yes|true)#1#ig'`
+  use_version=`echo "$2" | $esed -e 's#version=(1|yes|true)#1#ig'`
 fi
 
 
@@ -149,13 +149,13 @@ version=$(grep 'em:version=' install.rdf | \
             $esed -e 's#[ \t\r\n"]##g')
 if [ "$version" = '' ]
 then
-	version=$(grep '<em:version>' install.rdf | \
-	            $esed -e 's#</?em:version>##g' | \
-	            $esed -e 's#[ \t\r\n"]##g')
+  version=$(grep '<em:version>' install.rdf | \
+              $esed -e 's#</?em:version>##g' | \
+              $esed -e 's#[ \t\r\n"]##g')
 fi
 if [ "$version" != '' ]
 then
-	if [ "$use_version" = '1' ]; then version_part="-$version"; fi;
+  if [ "$use_version" = '1' ]; then version_part="-$version"; fi;
 fi
 
 
@@ -180,7 +180,7 @@ rm -f ${appname}${suffix}-*.lzh
 mkdir -p xpi_temp
 
 for f in ${xpi_contents}; do
-	$cp -rp --parents ${f} xpi_temp/
+  $cp -rp --parents ${f} xpi_temp/
 done
 
 $cp -r content ./xpi_temp/
@@ -212,27 +212,27 @@ cd ..
 # pack platform related resources
 if [ -d ./platform ]
 then
-	$cp -r platform ./xpi_temp/
-	cd xpi_temp/platform
+  $cp -r platform ./xpi_temp/
+  cd xpi_temp/platform
 
-	rm components/*.idl
+  rm components/*.idl
 
     if [ "$nojar" = "0" ]
     then
-		for dirname in *
-		do
-			if [ -d $dirname/content -o -d $dirname/skin -o -d $dirname/locale ]
-			then
-				cd $dirname
-				mkdir -p chrome
-				zip -r -0 chrome/$appname.jar content locale skin -x \*/.svn/\*
-				rm -r -f content
-				rm -r -f locale
-				rm -r -f skin
-			fi
-		done
-	fi
-	cd ../..
+    for dirname in *
+    do
+      if [ -d $dirname/content -o -d $dirname/skin -o -d $dirname/locale ]
+      then
+        cd $dirname
+        mkdir -p chrome
+        zip -r -0 chrome/$appname.jar content locale skin -x \*/.svn/\*
+        rm -r -f content
+        rm -r -f locale
+        rm -r -f skin
+      fi
+    done
+  fi
+  cd ../..
 fi
 
 
@@ -242,23 +242,23 @@ chmod -R 644 *.*
 
 if [ "$nojar" = "0" ]
 then
-	# create jar
-	mkdir -p chrome
-	zip -r -0 ./chrome/$appname.jar content locale skin -x \*/.svn/\*
-	if [ ! -f ./chrome/$appname.jar ]
-	then
-		rm -r -f chrome
-	fi
+  # create jar
+  mkdir -p chrome
+  zip -r -0 ./chrome/$appname.jar content locale skin -x \*/.svn/\*
+  if [ ! -f ./chrome/$appname.jar ]
+  then
+    rm -r -f chrome
+  fi
 else
-	xpi_contents="content locale skin $xpi_contents"
+  xpi_contents="content locale skin $xpi_contents"
 fi
 
 
 if [ -f ./install.js ]
 then
-	$cp ../ja.inf ./locale.inf
-	$cp ../options.$appname.ja.inf ./options.inf
-	chmod 644 *.inf
+  $cp ../ja.inf ./locale.inf
+  $cp ../options.$appname.ja.inf ./options.inf
+  chmod 644 *.inf
 fi
 
 
@@ -280,25 +280,25 @@ zip -r -$xpi_compression_level ../${appname}${version_part}${suffix}_noupdate.xp
 # create lzh
 if [ -f ../readme.txt ]
 then
-	lha a ../$appname${version_part}.lzh ../${appname}${suffix}.xpi ../readme.txt
+  lha a ../$appname${version_part}.lzh ../${appname}${suffix}.xpi ../readme.txt
 fi
 
 
 #create xpi (English)
 if [ -f ./install.js ]
 then
-	rm -f install.rdf
-	rm -f locale.inf
-	rm -f options.inf
-	$cp ../install.rdf ./install.rdf
-	$cp ../en.inf ./locale.inf
-	$cp ../options.$appname.en.inf ./options.inf
-	chmod 644 *.inf
-	zip -r -$xpi_compression_level ../${appname}${suffix}${version_part}_en.xpi $xpi_contents -x \*/.svn/\* || exit 1
+  rm -f install.rdf
+  rm -f locale.inf
+  rm -f options.inf
+  $cp ../install.rdf ./install.rdf
+  $cp ../en.inf ./locale.inf
+  $cp ../options.$appname.en.inf ./options.inf
+  chmod 644 *.inf
+  zip -r -$xpi_compression_level ../${appname}${suffix}${version_part}_en.xpi $xpi_contents -x \*/.svn/\* || exit 1
 
-	rm -f install.rdf
-	$esed -e "s#^.*<em:*\(updateURL\|updateKey\)>.*</em:*\(updateURL\|updateKey\)>##g" -e "s#^.*em:*\(updateURL\|updateKey\)=\(\".*\"\|'.*'\)##g" ../install.rdf > install.rdf
-	zip -r -$xpi_compression_level ../${appname}${suffix}${version_part}_noupdate_en.xpi $xpi_contents -x \*/.svn/\* || exit 1
+  rm -f install.rdf
+  $esed -e "s#^.*<em:*\(updateURL\|updateKey\)>.*</em:*\(updateURL\|updateKey\)>##g" -e "s#^.*em:*\(updateURL\|updateKey\)=\(\".*\"\|'.*'\)##g" ../install.rdf > install.rdf
+  zip -r -$xpi_compression_level ../${appname}${suffix}${version_part}_noupdate_en.xpi $xpi_contents -x \*/.svn/\* || exit 1
 fi
 
 
@@ -306,8 +306,8 @@ fi
 #create meta package
 if [ -d ../meta ]
 then
-	rm -f ../meta/${appname}${suffix}.xpi
-	$cp ../${appname}${suffix}${version_part}.xpi ../meta/${appname}${suffix}.xpi
+  rm -f ../meta/${appname}${suffix}.xpi
+  $cp ../${appname}${suffix}${version_part}.xpi ../meta/${appname}${suffix}.xpi
 fi
 
 # end
