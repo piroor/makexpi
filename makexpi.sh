@@ -285,7 +285,7 @@ fi
 
 #create xpi (Japanese)
 $cp install.rdf.base install.rdf
-zip -r -$xpi_compression_level ../$appname${version_part}${suffix}.xpi $xpi_contents -x \*/.svn/\* || exit 1
+zip -r -$xpi_compression_level "../$appname${version_part}${suffix}.xpi" $xpi_contents -x \*/.svn/\* || exit 1
 
 #create xpi without update info (Japanese)
 rm -f install.rdf
