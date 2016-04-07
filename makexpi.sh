@@ -204,7 +204,7 @@ echo 'preparing contents...'
 
 mkdir -p xpi_temp
 
-webextensions_files='_locales icons options scripts manifest.json'
+webextensions_files='_locales icons options content_scripts manifest.json'
 legacy_files='*.js *.rdf chrome.manifest *.inf *.cfg *.light icon*.png'
 legacy_dirs='chrome modules isp defaults license platform'
 legacy_files_in_subdirs='components/*.js components/*.xpt components/*/*.xpt'
