@@ -1,4 +1,4 @@
-# Utilityes for Firefox/Thunderbird Add-on Developers
+# Utilities for Firefox/Thunderbird Add-on Developers
 
 ## Building XPI packages
 
