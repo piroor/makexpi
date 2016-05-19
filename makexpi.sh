@@ -301,6 +301,7 @@ fi
 if [ "$nojar" = '0' ]
 then
   pack_to_jar
+  xpi_contents="chrome$xpi_contents"
 else
   xpi_contents="content locale skin$xpi_contents"
 fi
