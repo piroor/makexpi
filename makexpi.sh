@@ -208,7 +208,7 @@ webextensions_files='_locales icons common options background content_scripts ma
 legacy_files='*.js *.rdf chrome.manifest *.inf *.cfg *.light icon*.png'
 legacy_dirs='chrome modules isp defaults license platform'
 legacy_files_in_subdirs='components/*.js components/*.xpt components/*/*.xpt'
-exclude_options=" -x '*/.svn/*' -x '*/.git/*' -x '*/.git*'"
+exclude_options=" -x */.svn/* */.git/* */.git*"
 
 xpi_contents=''
 for target in $webextensions_files $legacy_files $legacy_dirs $legacy_files_in_subdirs
