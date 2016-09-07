@@ -49,6 +49,11 @@ fi
 output="$(cd "$output" && pwd)"
 xpi="$(cd $(dirname "$xpi") && pwd)/$(basename "$xpi")"
 
+manifest_json=$(unzip -p $xpi manifest.json)
+if [ "$manifest_json" != '' ]; then
+  id=$(echo "$manifest_json" | jq -r ".applications.gecko.id")
+  version=$(echo "$manifest_json" | jq -r ".version")
+else
 install_rdf=$(unzip -p $xpi install.rdf)
 
 extract_initial_em_value() {
@@ -60,6 +65,7 @@ extract_initial_em_value() {
 
 id=$(extract_initial_em_value id)
 version=$(extract_initial_em_value version)
+fi
 
 download() {
   extra_options = ""
