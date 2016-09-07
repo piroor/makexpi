@@ -21,11 +21,11 @@ fi
 project_dir=$(cd "$project_dir" && pwd)
 
 if [ -f install.rdf ]; then
-if [ "$public_key" = '' ]; then
-  echo "no public key specified"
-  exit 1
-fi
-public_key="$(cd $(dirname "$public_key") && pwd)/$(basename "$public_key")"
+  if [ "$public_key" = '' ]; then
+    echo "no public key specified"
+    exit 1
+  fi
+  public_key="$(cd $(dirname "$public_key") && pwd)/$(basename "$public_key")"
 fi
 
 # sedのオプションの違いを吸収しておく。
@@ -56,9 +56,9 @@ package_name=$(cat "$project_dir/Makefile" | \
                head -n 1 | cut -d "=" -f 2 | \
                $sed -e "s/\\s*//")
 if [ -f install.rdf ]; then
-public_key=$(cat "$public_key" | \
-             grep -v -E "^--" | \
-             tr -d "\r" | tr -d "\n")
+  public_key=$(cat "$public_key" | \
+               grep -v -E "^--" | \
+               tr -d "\r" | tr -d "\n")
 fi
 version=$(cat "$project_dir/history.en.md" | \
           grep -E "^ - [0-9\\.]+" | \
@@ -85,15 +85,15 @@ else
       jq "(. | select(.version)) |= \"$version\"" > manifest.json
     rm manifest.json.bak
   else
-  # リリースビルド用として、install.rdfを書き換える。
-  $sed -e "s/(em:version=\")[^\"]*/\\1$version/" \
-       -i install.rdf
-  update_rdf="${package_name}.update.rdf"
-  # update.rdfの参照先と、公開鍵を書き換える。
-  $sed -e "s#([^/]em:updateURL[=>\"]+)[^\"<]*#\\1http://piro.sakura.ne.jp/xul/xpi/updateinfo/${update_rdf}#" \
-       -i install.rdf
-  $sed -e "s#([^/]em:updateKey[=>\"]+)[^\"<]*#\\1${public_key}#" \
-       -i install.rdf
+    # リリースビルド用として、install.rdfを書き換える。
+    $sed -e "s/(em:version=\")[^\"]*/\\1$version/" \
+         -i install.rdf
+    update_rdf="${package_name}.update.rdf"
+    # update.rdfの参照先と、公開鍵を書き換える。
+    $sed -e "s#([^/]em:updateURL[=>\"]+)[^\"<]*#\\1http://piro.sakura.ne.jp/xul/xpi/updateinfo/${update_rdf}#" \
+         -i install.rdf
+    $sed -e "s#([^/]em:updateKey[=>\"]+)[^\"<]*#\\1${public_key}#" \
+         -i install.rdf
   fi
 
   make
