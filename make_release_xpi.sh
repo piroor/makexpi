@@ -20,11 +20,13 @@ if [ "$project_dir" = '' ]; then
 fi
 project_dir=$(cd "$project_dir" && pwd)
 
+if [ -f install.rdf ]; then
 if [ "$public_key" = '' ]; then
   echo "no public key specified"
   exit 1
 fi
 public_key="$(cd $(dirname "$public_key") && pwd)/$(basename "$public_key")"
+fi
 
 # sedのオプションの違いを吸収しておく。
 case $(uname) in
@@ -53,9 +55,11 @@ package_name=$(cat "$project_dir/Makefile" | \
                grep "PACKAGE_NAME" | \
                head -n 1 | cut -d "=" -f 2 | \
                $sed -e "s/\\s*//")
+if [ -f install.rdf ]; then
 public_key=$(cat "$public_key" | \
              grep -v -E "^--" | \
              tr -d "\r" | tr -d "\n")
+fi
 version=$(cat "$project_dir/history.en.md" | \
           grep -E "^ - [0-9\\.]+" | \
           head -n 1 | \
@@ -74,6 +78,13 @@ else
   # 自動生成されたバージョン番号を控えておく。
   echo "$version" > release_version.txt
 
+  if [ -f manifest.json ]; then
+    # リリースビルド用として、install.rdfを書き換える。
+    mv manifest.json manifest.json.bak
+    cat manifest.json.bak |
+      jq "(. | select(.version)) |= \"$version\"" > manifest.json
+    rm manifest.json.bak
+  else
   # リリースビルド用として、install.rdfを書き換える。
   $sed -e "s/(em:version=\")[^\"]*/\\1$version/" \
        -i install.rdf
@@ -83,6 +94,7 @@ else
        -i install.rdf
   $sed -e "s#([^/]em:updateKey[=>\"]+)[^\"<]*#\\1${public_key}#" \
        -i install.rdf
+  fi
 
   make
 
