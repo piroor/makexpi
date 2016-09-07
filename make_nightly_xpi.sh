@@ -21,11 +21,11 @@ fi
 project_dir=$(cd "$project_dir" && pwd)
 
 if [ -f install.rdf ]; then
-if [ "$public_key" = '' ]; then
-  echo "no public key specified"
-  exit 1
-fi
-public_key="$(cd $(dirname "$public_key") && pwd)/$(basename "$public_key")"
+  if [ "$public_key" = '' ]; then
+    echo "no public key specified"
+    exit 1
+  fi
+  public_key="$(cd $(dirname "$public_key") && pwd)/$(basename "$public_key")"
 fi
 
 # sedのオプションの違いを吸収しておく。
@@ -50,9 +50,9 @@ package_name=$(cat "$project_dir/Makefile" | \
                head -n 1 | cut -d "=" -f 2 | \
                $sed -e "s/\\s*//")
 if [ "$public_key" != '' ]; then
-public_key=$(cat "$public_key" | \
-             grep -v -E "^--" | \
-             tr -d "\r" | tr -d "\n")
+  public_key=$(cat "$public_key" | \
+               grep -v -E "^--" | \
+               tr -d "\r" | tr -d "\n")
 fi
 
 if [ -f manifest.json ];
