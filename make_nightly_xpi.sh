@@ -73,32 +73,32 @@ then
   mv manifest.json.bak manifest.json
 else
   # for legacy addons
-cp install.rdf install.rdf.bak
+  cp install.rdf install.rdf.bak
 
-# ナイトリービルド用として、install.rdfを書き換える。
-# バージョン番号の末尾に今日の日付を付ける。
-$sed -e "s/(em:version=\"[^\"]+)\\.[0-9]{10}/\\1/" \
-     -i install.rdf
-$sed -e "s/(em:version=\"[^\"]+)/\\1.$(date +%Y%m%d00)a$(date +%H%M%S)/" \
-     -i install.rdf
-update_rdf="${package_name}.update.rdf"
-# update.rdfの参照先と、公開鍵を書き換える。
-$sed -e "s#/xul/update.rdf#/xul/xpi/nightly/updateinfo/${update_rdf}#" \
-     -i install.rdf
-$sed -e "s#([^/]em:updateKey[=>\"]+)[^\"<]+#\\1${public_key}#" \
-     -i install.rdf
+  # ナイトリービルド用として、install.rdfを書き換える。
+  # バージョン番号の末尾に今日の日付を付ける。
+  $sed -e "s/(em:version=\"[^\"]+)\\.[0-9]{10}/\\1/" \
+       -i install.rdf
+  $sed -e "s/(em:version=\"[^\"]+)/\\1.$(date +%Y%m%d00)a$(date +%H%M%S)/" \
+       -i install.rdf
+  update_rdf="${package_name}.update.rdf"
+  # update.rdfの参照先と、公開鍵を書き換える。
+  $sed -e "s#/xul/update.rdf#/xul/xpi/nightly/updateinfo/${update_rdf}#" \
+       -i install.rdf
+  $sed -e "s#([^/]em:updateKey[=>\"]+)[^\"<]+#\\1${public_key}#" \
+       -i install.rdf
 
-# 自動生成されたバージョン番号を控えておく。
-version=$(cat install.rdf | \
-          grep "em:version" | head -n 1 | \
-          $sed -e "s#[^\">]*[\">]([^\"<]+).*#\\1#" | \
-          tr -d "\r" | tr -d "\n")
-echo "$version" > nightly_version.txt
+  # 自動生成されたバージョン番号を控えておく。
+  version=$(cat install.rdf | \
+            grep "em:version" | head -n 1 | \
+            $sed -e "s#[^\">]*[\">]([^\"<]+).*#\\1#" | \
+            tr -d "\r" | tr -d "\n")
+  echo "$version" > nightly_version.txt
 
-make
+  make
 
-rm install.rdf
-mv install.rdf.bak install.rdf
+  rm install.rdf
+  mv install.rdf.bak install.rdf
 fi
 
 exit 0
