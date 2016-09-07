@@ -54,17 +54,17 @@ if [ "$manifest_json" != '' ]; then
   id=$(echo "$manifest_json" | jq -r ".applications.gecko.id")
   version=$(echo "$manifest_json" | jq -r ".version")
 else
-install_rdf=$(unzip -p $xpi install.rdf)
+  install_rdf=$(unzip -p $xpi install.rdf)
 
-extract_initial_em_value() {
-  echo "$install_rdf" | \
-    grep "em:$1" | head -n 1 | \
-    $sed -e "s/.*em:$1=['\"]([^'\"]+).+/\1/" \
-         -e "s/.*<em:$1>([^<]+).+/\1/"
-}
+  extract_initial_em_value() {
+    echo "$install_rdf" | \
+      grep "em:$1" | head -n 1 | \
+      $sed -e "s/.*em:$1=['\"]([^'\"]+).+/\1/" \
+           -e "s/.*<em:$1>([^<]+).+/\1/"
+  }
 
-id=$(extract_initial_em_value id)
-version=$(extract_initial_em_value version)
+  id=$(extract_initial_em_value id)
+  version=$(extract_initial_em_value version)
 fi
 
 download() {
