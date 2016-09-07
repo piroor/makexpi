@@ -51,6 +51,28 @@ public_key=$(cat "$public_key" | \
              grep -v -E "^--" | \
              tr -d "\r" | tr -d "\n")
 
+
+if [ -f manifest.json ];
+then
+  # for WebExtensions addons
+  cp manifest.json manifest.json.bak
+
+  # ナイトリービルド用として、manifest.jsonを書き換える。
+  # バージョン番号の末尾に今日の日付を付ける。
+  version=$(cat manifest.json |
+              jq -r ".version" |
+              $sed -e "s/\\.[0-9]{10}//" \
+                   -e "s/$/.$(date +%Y%m%d00)a$(date +%H%M%S)/")
+  echo "$version" > nightly_version.txt
+  cat manifest.json.bak |
+    jq "(. | select(.version)) |= \"$version\"" > manifest.json
+
+  make
+
+  rm manifest.json
+  mv manifest.json.bak manifest.json
+else
+  # for legacy addons
 cp install.rdf install.rdf.bak
 
 # ナイトリービルド用として、install.rdfを書き換える。
@@ -77,5 +99,6 @@ make
 
 rm install.rdf
 mv install.rdf.bak install.rdf
+fi
 
 exit 0
