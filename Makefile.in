@@ -5,6 +5,7 @@ PACKAGE_NAME = %APPNAME%
 all: xpi
 
 xpi: makexpi/makexpi.sh
+	git submodule update
 	makexpi/makexpi.sh -n $(PACKAGE_NAME) -o
 
 makexpi/makexpi.sh:
