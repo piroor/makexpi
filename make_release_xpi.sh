@@ -67,6 +67,26 @@ version=$(cat "$project_dir/history.en.md" | \
           $sed -e "s/ *\([^\)]+\) *\$//" | \
           tr -d "\r" | tr -d "\n")
 
+update_manifest_json() {
+  # リリースビルド用として、manifest.jsonを書き換える。
+  mv manifest.json manifest.json.bak
+  cat manifest.json.bak |
+    jq ".version |= \"$version\"" > manifest.json
+  rm manifest.json.bak
+}
+
+update_install_rdf() {
+  # リリースビルド用として、install.rdfを書き換える。
+  $sed -e "s/(em:version=\")[^\"]*/\\1$version/" \
+       -i install.rdf
+  update_rdf="${package_name}.update.rdf"
+  # update.rdfの参照先と、公開鍵を書き換える。
+  $sed -e "s#([^/]em:updateURL[=>\"]+)[^\"<]*#\\1http://piro.sakura.ne.jp/xul/xpi/updateinfo/${update_rdf}#" \
+       -i install.rdf
+  $sed -e "s#([^/]em:updateKey[=>\"]+)[^\"<]*#\\1${public_key}#" \
+       -i install.rdf
+}
+
 result=0
 if [ "$package_name" = "" ]; then
   echo "ERROR: couldn't detect the project name for $project_dir"
@@ -79,24 +99,31 @@ else
   echo "$version" > release_version.txt
 
   if [ -f manifest.json ]; then
-    # リリースビルド用として、install.rdfを書き換える。
-    mv manifest.json manifest.json.bak
-    cat manifest.json.bak |
-      jq "(. | select(.version)) |= \"$version\"" > manifest.json
-    rm manifest.json.bak
+    echo "building WebExtensions version..."
+    update_manifest_json
+    make
   else
-    # リリースビルド用として、install.rdfを書き換える。
-    $sed -e "s/(em:version=\")[^\"]*/\\1$version/" \
-         -i install.rdf
-    update_rdf="${package_name}.update.rdf"
-    # update.rdfの参照先と、公開鍵を書き換える。
-    $sed -e "s#([^/]em:updateURL[=>\"]+)[^\"<]*#\\1http://piro.sakura.ne.jp/xul/xpi/updateinfo/${update_rdf}#" \
-         -i install.rdf
-    $sed -e "s#([^/]em:updateKey[=>\"]+)[^\"<]*#\\1${public_key}#" \
-         -i install.rdf
+    major_version="$(echo "$version" | $sed -e 's/^([0-9]+).+/\1/')"
+    we_major_version="$(cat webextensions/manifest.json |
+                          jq -r ".version" |
+                          $sed -e 's/^([0-9]+).+/\1/')"
+    echo "major version: $major_version"
+    echo "major version of WebExtensions version: $we_major_version"
+    if [ -f webextensions/manifest.json -a \
+        "$major_version" = "$we_major_version" ]; then
+      echo "building WebExtensions version..."
+      (cd webextensions &&
+         update_manifest_json &&
+         make &&
+         rm ../*.xpi &&
+         mv *.xpi ../)
+    else
+      echo "building legacy version..."
+      update_install_rdf
+      make xpi
+      rm *-we.xpi
+    fi
   fi
-
-  make
 
   git reset --hard
 fi
