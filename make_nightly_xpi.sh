@@ -55,27 +55,28 @@ if [ "$public_key" != '' ]; then
                tr -d "\r" | tr -d "\n")
 fi
 
-if [ -f manifest.json ];
-then
+
+
+update_manifest_json() {
   # for WebExtensions addons
   cp manifest.json manifest.json.bak
 
   # ナイトリービルド用として、manifest.jsonを書き換える。
-  # バージョン番号の末尾に今日の日付を付ける。
+  # バージョン番号の末尾に現在のリビジョン数を付ける。
   version=$(cat manifest.json |
               jq -r ".version" |
-              $sed -e "s/\\.[0-9]{10}//" \
-                   -e "s/$/.$(date +%Y%m%d00)a$(date +%H%M%S)/")
+              $sed -e "s/$/.$(git log --oneline | wc -l)/")
   echo "$version" > nightly_version.txt
   cat manifest.json.bak |
-    jq "(. | select(.version)) |= \"$version\"" > manifest.json
+    jq ".version |= \"$version\"" > manifest.json
 
   make
 
   rm manifest.json
   mv manifest.json.bak manifest.json
-else
-  # for legacy addons
+}
+
+update_install_rdf() {
   cp install.rdf install.rdf.bak
 
   # ナイトリービルド用として、install.rdfを書き換える。
@@ -102,6 +103,21 @@ else
 
   rm install.rdf
   mv install.rdf.bak install.rdf
+}
+
+
+
+if [ -f manifest.json ]
+then
+  update_manifest_json
+else
+  update_install_rdf
+  if [ -f webextensions/manifest.json ]
+  then
+    (cd webextensions &&
+     update_manifest_json &&
+     mv *.xpi ../)
+  fi
 fi
 
 exit 0
