@@ -55,7 +55,10 @@ package_name=$(cat "$project_dir/Makefile" | \
                grep "PACKAGE_NAME" | \
                head -n 1 | cut -d "=" -f 2 | \
                $sed -e "s/\\s*//")
-[ "$package_name" = "" ] && package_name="$project_name"
+if [ "$package_name" = "" ]; then
+  package_name="$project_name"
+fi
+
 if [ -f install.rdf ]; then
   public_key=$(cat "$public_key" | \
                grep -v -E "^--" | \
