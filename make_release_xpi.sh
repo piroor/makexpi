@@ -34,11 +34,11 @@ case $(uname) in
   *)                   sed="sed -r" ;;
 esac
 
+project_name=$(basename "$project_dir")
 if [ -d "$project_dir" ]
 then
   cd "$project_dir"
 else
-  project_name=$(basename "$project_dir")
   if [ "$project_owner" = "" ]; then project_owner=$project_name; fi
   cd $(dirname "$project_dir")
   git clone git@github.com:$project_owner/$project_name.git
