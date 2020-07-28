@@ -132,7 +132,7 @@ else
   git reset --hard
 fi
 
-git checkout master
+ggit checkout master
 #master_head_commit=$(git describe | cut -d "-" -f 3)
 #if [ "$master_head_commit" != $current ]; then
 #  git checkout $current
